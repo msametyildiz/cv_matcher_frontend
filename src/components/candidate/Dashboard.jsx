@@ -15,32 +15,6 @@ const CandidateDashboard = () => {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  
-  useEffect(() => {
-    const fetchDashboardData = async () => {
-      setIsLoading(true);
-      try {
-        // For now, we'll use mock data
-        setDashboardData({
-          applications: [
-            { id: 1, jobTitle: 'Software Engineer', company: 'Tech Corp', status: 'applied', appliedDate: '2023-05-01' },
-            { id: 2, jobTitle: 'UX Designer', company: 'Design Studios', status: 'interview', appliedDate: '2023-05-05' },
-          ],
-          jobRecommendations: [
-            { id: 1, title: 'Frontend Developer', company: 'Web Solutions', matchPercentage: 85 },
-            { id: 2, title: 'JavaScript Developer', company: 'App Inc', matchPercentage: 78 },
-          ],
-          cvs: [
-            { id: 1, filename: 'My_Resume.pdf', uploadDate: '2023-04-15', isPrimary: true },
-          ]
-        });
-      } catch (error) {
-        console.error('Error fetching dashboard data:', error);
-        setError('Failed to load dashboard data. Please try again.');
-      } finally {
-        setIsLoading(false);
-      }
-    };
     useEffect(() => {
     const fetchDashboardData = async () => {
       setIsLoading(true);
