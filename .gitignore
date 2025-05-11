@@ -1,0 +1,10 @@
+**/*.pem
+.env
+*.key
+*.pem
+*.crt
+*.enc
+node_modules/
+coverage/
+*.log
+*.tgz           
