@@ -975,6 +975,226 @@ const Profile = () => {
           
           <div className="px-6 py-5">
             {isEditing && activeSection === 'languages' ? (
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {editFields.languages.map((lang, index) => (
-                  <div key={
+                  <div key={index} className="grid grid-cols-1 gap-4 sm:grid-cols-6 border border-gray-200 rounded-md p-4 relative">
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveItem('languages', index)}
+                      className="absolute top-2 right-2 text-gray-400 hover:text-gray-500"
+                    >
+                      <X className="h-5 w-5" />
+                    </button>
+                    
+                    <div className="sm:col-span-3">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Language
+                      </label>
+                      <div className="mt-1">
+                        <input
+                          type="text"
+                          value={lang.language}
+                          onChange={(e) => handleArrayItemChange('languages', index, 'language', e.target.value)}
+                          className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                          placeholder="e.g. English, Spanish, French"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="sm:col-span-3">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Proficiency
+                      </label>
+                      <div className="mt-1">
+                        <select
+                          value={lang.proficiency}
+                          onChange={(e) => handleArrayItemChange('languages', index, 'proficiency', e.target.value)}
+                          className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                        >
+                          <option value="">Select proficiency</option>
+                          <option value="Native">Native</option>
+                          <option value="Fluent">Fluent</option>
+                          <option value="Advanced">Advanced</option>
+                          <option value="Intermediate">Intermediate</option>
+                          <option value="Beginner">Beginner</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                
+                <button
+                  type="button"
+                  onClick={() => handleAddItem('languages')}
+                  className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                  <Plus className="h-4 w-4 mr-1" />
+                  Add Language
+                </button>
+                
+                <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200 mt-6">
+                  <button
+                    type="button"
+                    onClick={handleCancel}
+                    className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  >
+                    <X className="h-4 w-4 mr-1" />
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleSave('languages')}
+                    disabled={isSaving}
+                    className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Save className="h-4 w-4 mr-1" />
+                    {isSaving ? 'Saving...' : 'Save'}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div>
+                {profile.languages.length > 0 ? (
+                  <ul className="space-y-3">
+                    {profile.languages.map((lang, index) => (
+                      <li key={index} className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-gray-900">{lang.language}</span>
+                        <span className="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                          {lang.proficiency}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-gray-500 text-sm">
+                    No languages added yet.
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+        
+        {/* External Links */}
+        <div className="bg-white shadow rounded-lg overflow-hidden">
+          <div className="px-6 py-5 border-b border-gray-200 flex justify-between items-center">
+            <h2 className="text-lg font-medium text-gray-900">External Links</h2>
+            {!isEditing && (
+              <button
+                type="button"
+                onClick={() => handleEdit('links')}
+                className="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                <Edit className="h-4 w-4 mr-1" />
+                Edit
+              </button>
+            )}
+          </div>
+          
+          <div className="px-6 py-5">
+            {isEditing && activeSection === 'links' ? (
+              <div className="space-y-4">
+                {editFields.links.map((link, index) => (
+                  <div key={index} className="grid grid-cols-1 gap-4 sm:grid-cols-6 border border-gray-200 rounded-md p-4 relative">
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveItem('links', index)}
+                      className="absolute top-2 right-2 text-gray-400 hover:text-gray-500"
+                    >
+                      <X className="h-5 w-5" />
+                    </button>
+                    
+                    <div className="sm:col-span-2">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Title
+                      </label>
+                      <div className="mt-1">
+                        <input
+                          type="text"
+                          value={link.title}
+                          onChange={(e) => handleArrayItemChange('links', index, 'title', e.target.value)}
+                          className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                          placeholder="e.g. GitHub, LinkedIn"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="sm:col-span-4">
+                      <label className="block text-sm font-medium text-gray-700">
+                        URL
+                      </label>
+                      <div className="mt-1">
+                        <input
+                          type="url"
+                          value={link.url}
+                          onChange={(e) => handleArrayItemChange('links', index, 'url', e.target.value)}
+                          className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                          placeholder="https://example.com"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                
+                <button
+                  type="button"
+                  onClick={() => handleAddItem('links')}
+                  className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                  <Plus className="h-4 w-4 mr-1" />
+                  Add Link
+                </button>
+                
+                <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200 mt-6">
+                  <button
+                    type="button"
+                    onClick={handleCancel}
+                    className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  >
+                    <X className="h-4 w-4 mr-1" />
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleSave('links')}
+                    disabled={isSaving}
+                    className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Save className="h-4 w-4 mr-1" />
+                    {isSaving ? 'Saving...' : 'Save'}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div>
+                {profile.links.length > 0 ? (
+                  <ul className="space-y-3">
+                    {profile.links.map((link, index) => (
+                      <li key={index} className="flex items-center">
+                        <LinkIcon className="h-4 w-4 text-gray-400 mr-2" />
+                        <a
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:text-blue-500"
+                        >
+                          {link.title}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-gray-500 text-sm">
+                    No external links added yet.
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Profile;

@@ -417,7 +417,7 @@ const Interviews = () => {
                   </button>
                   
                   {interview.status === 'scheduled' && interview.meetingUrl && (
-                    
+                    <a
                       href={interview.meetingUrl}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -601,7 +601,7 @@ const Interviews = () => {
               </button>
               
               {selectedInterview.status === 'scheduled' && selectedInterview.meetingUrl && (
-                
+                <a
                   href={selectedInterview.meetingUrl}
                   target="_blank"
                   rel="noopener noreferrer"
