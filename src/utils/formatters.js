@@ -239,11 +239,9 @@ export const formatDate = (date, options = {}) => {
   export const generateTempId = (length = 8) => {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
-    
     for (let i = 0; i < length; i++) {
       result += chars.charAt(Math.floor(Math.random() * chars.length));
     }
-    
     return result;
   };
   

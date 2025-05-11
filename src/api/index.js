@@ -36,10 +36,13 @@ apiClient.interceptors.response.use(
     if (error.response && error.response.status === 401) {
       // Clear local storage
       localStorage.removeItem('token');
-      // Redirect to login page if not already there
-      if (window.location.pathname !== '/login') {
-        window.location.href = '/login';
-      }
+      
+      // Don't use direct DOM manipulation
+      // Instead, store a flag in localStorage that the app can check
+      localStorage.setItem('auth_redirect', 'true');
+      
+      // The actual redirect should be handled by a React component
+      // with useEffect that checks for this flag
     }
     return Promise.reject(error);
   }

@@ -9,11 +9,38 @@
  * @returns {boolean} True if value is not empty
  */
 export const isRequired = (value) => {
+  if (value === undefined || value === null) return false;
+  
+  if (typeof value === 'string') {
+    return value.trim().length > 0;
+  }
+  
+  if (typeof value === 'number') {
+    return true;
+  }
+  
+  if (Array.isArray(value)) {
+    return value.length > 0;
+  }
+  
+  if (typeof value === 'object') {
+    return Object.keys(value).length > 0;
+  }
+  
+  return !!value;
+};
+
+/**
+ * Validates if a value is not empty
+ * 
+ * @param {*} value - Value to validate
+ * @returns {boolean} True if value is not empty
+ */
+export const isNotEmpty = (value) => {
   if (value === null || value === undefined) return false;
   if (typeof value === 'string') return value.trim().length > 0;
-  if (Array.isArray(value)) return value.length > 0;
   if (typeof value === 'object') return Object.keys(value).length > 0;
-  return true;
+  return !!value;
 };
 
 /**
@@ -97,6 +124,20 @@ export const validatePassword = (password, options = {}) => {
     isValid: true,
     message: 'Password is valid'
   };
+};
+
+/**
+ * Validates password strength
+ * 
+ * @param {string} password - Password to validate
+ * @param {Object} options - Validation options
+ * @returns {boolean} True if password meets requirements
+ */
+export const isValidPassword = (password, options = {}) => {
+  const { minLength } = options;
+  if (!password || typeof password !== 'string') return false;
+  if (minLength && password.length < minLength) return false;
+  return true;
 };
 
 /**
@@ -440,6 +481,7 @@ export const validateForm = (data, schema) => {
 
 export default {
   isRequired,
+  isNotEmpty,
   isValidEmail,
   validatePassword,
   valuesMatch,

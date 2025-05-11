@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from './hooks/useAuth';
 
 // Layouts
@@ -28,10 +28,10 @@ import CandidateSettings from './pages/candidate/Settings';
 
 // Employer pages
 import EmployerDashboard from './pages/employer/Dashboard';
-import CreateJob from './pages/employer/CreateJob';
-import EditJob from './pages/employer/EditJob';
 import JobList from './pages/employer/JobList';
 import JobDetailEmployer from './pages/employer/JobDetail';
+import CreateJob from './pages/employer/CreateJob';
+import EditJob from './pages/employer/EditJob';
 import CandidateSearch from './pages/employer/CandidateSearch';
 import CandidateDetail from './pages/employer/CandidateDetail';
 import InterviewScheduler from './pages/employer/InterviewScheduler';
@@ -122,35 +122,41 @@ const AppRoutes = () => {
 // Helper component for protected routes
 const ProtectedRoute = ({ children, role }) => {
   const { user, isAuthenticated, isLoading } = useAuth();
-  const location = useLocation();
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      navigate('/login', { state: { returnUrl: window.location.pathname } });
+    } else if (!isLoading && isAuthenticated && role && user.role !== role) {
+      // If user doesn't have the required role, redirect to their appropriate dashboard
+      const dashboardPath = user.role === 'admin' 
+        ? '/admin/dashboard'
+        : user.role === 'employer' 
+          ? '/employer/dashboard' 
+          : '/candidate/dashboard';
+      
+      navigate(dashboardPath, { 
+        state: { 
+          message: `You don't have permission to access this page. You've been redirected to your dashboard.` 
+        } 
+      });
+    }
+  }, [isAuthenticated, isLoading, role, user, navigate]);
   
   if (isLoading) {
-    // You could render a loading spinner here
     return <div className="min-h-screen flex items-center justify-center">
       <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
     </div>;
   }
   
   if (!isAuthenticated) {
-    // Redirect to login page but save the location they were trying to access
-    return <Navigate to="/login" state={{ returnUrl: location.pathname }} replace />;
+    return null;
   }
   
   if (role && user.role !== role) {
-    // If user doesn't have the required role, redirect to their appropriate dashboard
-    switch (user.role) {
-      case 'candidate':
-        return <Navigate to="/candidate/dashboard" replace />;
-      case 'employer':
-        return <Navigate to="/employer/dashboard" replace />;
-      case 'admin':
-        return <Navigate to="/admin/dashboard" replace />;
-      default:
-        return <Navigate to="/" replace />;
-    }
+    return null;
   }
   
-  // If they made it here, they're authenticated and authorized
   return children;
 };
 

@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { resetPassword } from '../../api/auth';
+import { isValidPassword } from '../../utils/validation';
+import { AUTH } from '../../utils/constants';
 
 const PasswordReset = () => {
   const { token } = useParams();
@@ -17,10 +19,19 @@ const PasswordReset = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Check if passwords match
     if (formData.password !== formData.confirmPassword) {
       toast.error('Passwords do not match');
       return;
     }
+    
+    // Validate password strength
+    if (!isValidPassword(formData.password, { minLength: AUTH.MINIMUM_PASSWORD_LENGTH })) {
+      toast.error(`Password must be at least ${AUTH.MINIMUM_PASSWORD_LENGTH} characters long`);
+      return;
+    }
+    
     setLoading(true);
     try {
       await resetPassword(token, formData.password);

@@ -5,6 +5,7 @@ import { toast } from 'react-hot-toast';
 import api from '../../api';
 import Loader from '../../components/common/Loader';
 import ErrorMessage from '../../components/common/ErrorMessage';
+import Modal from '../../components/common/Modal';
 
 const JobList = () => {
   const [jobs, setJobs] = useState([]);
@@ -12,6 +13,8 @@ const JobList = () => {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [jobToDelete, setJobToDelete] = useState(null);
   
   useEffect(() => {
     const fetchJobs = async () => {
@@ -41,15 +44,23 @@ const JobList = () => {
   }, []);
   
   const handleDelete = async (jobId) => {
-    if (window.confirm('Are you sure you want to delete this job posting?')) {
-      try {
-        // await api.job.deleteJob(jobId);
-        setJobs(jobs.filter(job => job.id !== jobId));
-        toast.success('Job deleted successfully');
-      } catch (error) {
-        console.error('Error deleting job:', error);
-        toast.error('Failed to delete job');
-      }
+    setJobToDelete(jobId);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!jobToDelete) return;
+    
+    try {
+      // await api.job.deleteJob(jobToDelete);
+      setJobs(jobs.filter(job => job.id !== jobToDelete));
+      toast.success('Job deleted successfully');
+    } catch (error) {
+      console.error('Error deleting job:', error);
+      toast.error('Failed to delete job');
+    } finally {
+      setShowDeleteModal(false);
+      setJobToDelete(null);
     }
   };
   
@@ -236,6 +247,18 @@ const JobList = () => {
             </div>
           )}
         </div>
+      )}
+      
+      {showDeleteModal && (
+        <Modal
+          isOpen={showDeleteModal}
+          onRequestClose={() => setShowDeleteModal(false)}
+          title="Confirm Deletion"
+          description="Are you sure you want to delete this job posting? This action cannot be undone."
+          onConfirm={confirmDelete}
+          confirmText="Delete"
+          cancelText="Cancel"
+        />
       )}
     </div>
   );

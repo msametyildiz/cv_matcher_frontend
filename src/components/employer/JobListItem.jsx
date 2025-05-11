@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Pencil, Trash2 } from 'lucide-react';
 
-const JobListItem = ({ job, onDelete }) => {
+const JobListItem = ({ job, onDelete, onConfirmDelete }) => {
   return (
     <div className="border rounded-lg bg-white shadow-sm p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
       <div>

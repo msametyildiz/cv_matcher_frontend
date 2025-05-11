@@ -4,6 +4,7 @@ import { toast } from 'react-hot-toast';
 import api from '../../api';
 import Loader from '../common/Loader';
 import ErrorMessage from '../common/ErrorMessage';
+import { isNotEmpty } from '../../utils/validation';
 
 const ProfileForm = () => {
   const [formData, setFormData] = useState({
@@ -42,6 +43,18 @@ const ProfileForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate required fields
+    if (!isNotEmpty(formData.name)) {
+      toast.error('Name is required');
+      return;
+    }
+    
+    if (!isNotEmpty(formData.email)) {
+      toast.error('Email is required');
+      return;
+    }
+    
     setSaving(true);
     try {
       await api.put('/candidate/profile', formData);

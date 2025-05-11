@@ -11,6 +11,8 @@ const UserList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
+  const [userToDelete, setUserToDelete] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const fetchUsers = async () => {
     try {
@@ -27,17 +29,26 @@ const UserList = () => {
     fetchUsers();
   }, []);
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this user?')) return;
-    setDeletingId(id);
+  const handleDelete = (id) => {
+    // Replace window.confirm with modal
+    setUserToDelete(id);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!userToDelete) return;
+
+    setDeletingId(userToDelete);
     try {
-      await api.delete(`/admin/users/${id}`);
+      await api.delete(`/admin/users/${userToDelete}`);
       toast.success('User deleted');
-      setUsers(users.filter(user => user.id !== id));
+      setUsers(users.filter(user => user.id !== userToDelete));
     } catch (err) {
       toast.error('Delete failed');
     } finally {
       setDeletingId(null);
+      setShowDeleteModal(false);
+      setUserToDelete(null);
     }
   };
 
@@ -87,6 +98,28 @@ const UserList = () => {
           </tbody>
         </table>
       </div>
+      {showDeleteModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 max-w-sm w-full">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">Confirm Delete</h3>
+            <p className="text-gray-600 mb-4">Are you sure you want to delete this user?</p>
+            <div className="flex justify-end space-x-2">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

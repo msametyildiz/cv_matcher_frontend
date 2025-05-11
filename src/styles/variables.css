@@ -1,0 +1,204 @@
+/**
+ * Global CSS Variables for CV Matcher
+ * These variables define the design tokens used throughout the application
+ */
+
+:root {
+  /* Color Palette - Base colors */
+  --color-primary: #0284c7; /* brand-blue-600 */
+  --color-primary-light: #38bdf8; /* brand-blue-400 */
+  --color-primary-dark: #0369a1; /* brand-blue-700 */
+  --color-secondary: #6366f1; /* indigo-500 */
+  --color-secondary-light: #818cf8; /* indigo-400 */
+  --color-secondary-dark: #4f46e5; /* indigo-600 */
+  
+  /* Semantic colors */
+  --color-success: #10b981; /* green-500 */
+  --color-success-light: #34d399; /* green-400 */
+  --color-success-dark: #059669; /* green-600 */
+  
+  --color-warning: #f59e0b; /* amber-500 */
+  --color-warning-light: #fbbf24; /* amber-400 */
+  --color-warning-dark: #d97706; /* amber-600 */
+  
+  --color-error: #ef4444; /* red-500 */
+  --color-error-light: #f87171; /* red-400 */
+  --color-error-dark: #dc2626; /* red-600 */
+  
+  --color-info: #3b82f6; /* blue-500 */
+  --color-info-light: #60a5fa; /* blue-400 */
+  --color-info-dark: #2563eb; /* blue-600 */
+  
+  /* Neutrals */
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+  
+  /* Text colors */
+  --text-primary: var(--color-gray-900);
+  --text-secondary: var(--color-gray-700);
+  --text-tertiary: var(--color-gray-500);
+  --text-disabled: var(--color-gray-400);
+  --text-on-primary: white;
+  --text-on-secondary: white;
+  
+  /* Background colors */
+  --bg-primary: white;
+  --bg-secondary: var(--color-gray-50);
+  --bg-tertiary: var(--color-gray-100);
+  --bg-disabled: var(--color-gray-200);
+  
+  /* Border colors */
+  --border-primary: var(--color-gray-200);
+  --border-secondary: var(--color-gray-300);
+  --border-focus: var(--color-primary);
+  
+  /* Typography */
+  --font-family-base: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-family-heading: var(--font-family-base);
+  
+  --font-size-xs: 0.75rem;    /* 12px */
+  --font-size-sm: 0.875rem;   /* 14px */
+  --font-size-base: 1rem;     /* 16px */
+  --font-size-lg: 1.125rem;   /* 18px */
+  --font-size-xl: 1.25rem;    /* 20px */
+  --font-size-2xl: 1.5rem;    /* 24px */
+  --font-size-3xl: 1.875rem;  /* 30px */
+  --font-size-4xl: 2.25rem;   /* 36px */
+  
+  --line-height-none: 1;
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+  
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  /* Spacing */
+  --spacing-0: 0;
+  --spacing-1: 0.25rem;    /* 4px */
+  --spacing-2: 0.5rem;     /* 8px */
+  --spacing-3: 0.75rem;    /* 12px */
+  --spacing-4: 1rem;       /* 16px */
+  --spacing-5: 1.25rem;    /* 20px */
+  --spacing-6: 1.5rem;     /* 24px */
+  --spacing-8: 2rem;       /* 32px */
+  --spacing-10: 2.5rem;    /* 40px */
+  --spacing-12: 3rem;      /* 48px */
+  --spacing-16: 4rem;      /* 64px */
+  --spacing-20: 5rem;      /* 80px */
+  --spacing-24: 6rem;      /* 96px */
+  --spacing-32: 8rem;      /* 128px */
+  
+  /* Border radius */
+  --radius-none: 0;
+  --radius-sm: 0.125rem;   /* 2px */
+  --radius-md: 0.25rem;    /* 4px */
+  --radius-lg: 0.5rem;     /* 8px */
+  --radius-xl: 0.75rem;    /* 12px */
+  --radius-full: 9999px;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+  
+  /* Z-index */
+  --z-index-dropdown: 10;
+  --z-index-sticky: 20;
+  --z-index-fixed: 30;
+  --z-index-modal-backdrop: 40;
+  --z-index-modal: 50;
+  --z-index-popover: 60;
+  --z-index-tooltip: 70;
+  
+  /* Transitions */
+  --transition-fast: 150ms;
+  --transition-normal: 300ms;
+  --transition-slow: 500ms;
+  --easing-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --easing-in: cubic-bezier(0.4, 0, 1, 1);
+  --easing-out: cubic-bezier(0, 0, 0.2, 1);
+  --easing-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Form elements */
+  --input-height: 2.5rem;
+  --input-padding-x: 0.75rem;
+  --input-padding-y: 0.5rem;
+  --input-border-width: 1px;
+  --input-border-radius: var(--radius-md);
+  --input-focus-ring-width: 2px;
+  
+  /* Container widths */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+  --container-2xl: 1536px;
+}
+
+/* Dark mode variables */
+.dark {
+  /* Dark mode colors */
+  --bg-primary: var(--color-gray-900);
+  --bg-secondary: var(--color-gray-800);
+  --bg-tertiary: var(--color-gray-700);
+  --bg-disabled: var(--color-gray-600);
+  
+  --text-primary: var(--color-gray-50);
+  --text-secondary: var(--color-gray-200);
+  --text-tertiary: var(--color-gray-400);
+  --text-disabled: var(--color-gray-500);
+  
+  --border-primary: var(--color-gray-700);
+  --border-secondary: var(--color-gray-600);
+  
+  /* Adjust shadow intensity for dark mode */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* For high contrast mode */
+@media (prefers-contrast: high) {
+  :root {
+    --text-primary: black;
+    --text-secondary: black;
+    --text-tertiary: black;
+    --bg-primary: white;
+    --bg-secondary: white;
+    --bg-tertiary: #f0f0f0;
+    
+    --border-primary: black;
+    --border-secondary: black;
+    
+    --color-primary: #0052cc;
+    --color-primary-dark: #003d99;
+    --color-error: #d50000;
+    --color-success: #006624;
+    --color-warning: #804000;
+    --color-info: #0a2472;
+  }
+}
+
+/* For reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transition-fast: 0ms;
+    --transition-normal: 0ms;
+    --transition-slow: 0ms;
+  }
+}

@@ -1,7 +1,9 @@
 /**
  * Utility functions for API operations and request handling
  */
+
 import axios from 'axios';
+import { toast } from 'react-hot-toast';
 
 /**
  * Creates an API client with default configuration
@@ -392,6 +394,67 @@ export const normalizeApiError = (error) => {
   };
 };
 
+// Handle API errors based on status code
+export const handleApiError = (error) => {
+  const status = error.response?.status;
+  
+  switch (status) {
+    case 401:
+      // Handle unauthorized error
+      localStorage.removeItem('token');
+      toast.error('Your session has expired. Please log in again.');
+      // Redirect handling should be done in a React component with useEffect
+      break;
+    case 403:
+      toast.error('You do not have permission to perform this action');
+      break;
+    case 404:
+      toast.error('The requested resource was not found');
+      break;
+    case 422:
+      // Validation errors
+      const validationErrors = error.response?.data?.errors;
+      if (validationErrors) {
+        Object.values(validationErrors).forEach(error => {
+          if (Array.isArray(error)) {
+            error.forEach(e => toast.error(e));
+          } else {
+            toast.error(error);
+          }
+        });
+      } else {
+        toast.error(error.response?.data?.message || 'Validation failed');
+      }
+      break;
+    case 500:
+      toast.error('Server error. Please try again later.');
+      break;
+    default:
+      if (!error.response && error.message === 'Network Error') {
+        toast.error('Network error. Please check your internet connection.');
+      } else {
+        toast.error(error.response?.data?.message || 'An error occurred');
+      }
+  }
+};
+
+// Format API request data before sending
+export const formatRequestData = (data) => {
+  // Remove empty strings and null values
+  if (!data || typeof data !== 'object') return data;
+  
+  const formattedData = { ...data };
+  
+  Object.keys(formattedData).forEach(key => {
+    const value = formattedData[key];
+    if (value === '' || value === null || value === undefined) {
+      delete formattedData[key];
+    }
+  });
+  
+  return formattedData;
+};
+
 export default {
   createApiClient,
   createCancellableRequest,
@@ -400,5 +463,7 @@ export default {
   downloadFile,
   cacheApiCall,
   mockApiResponse,
-  normalizeApiError
+  normalizeApiError,
+  handleApiError,
+  formatRequestData
 };
