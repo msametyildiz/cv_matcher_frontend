@@ -2,9 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Minus } from 'lucide-react';
 import { toast } from 'react-hot-toast';
-import api from '../../api';
 
 const CreateJob = () => {
+  const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState({});
+  
+  // Form state
   const [formData, setFormData] = useState({
     title: '',
     company: '',
@@ -23,10 +27,7 @@ const CreateJob = () => {
     isRemote: false,
   });
   
-  const [errors, setErrors] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const navigate = useNavigate();
-  
+  // Handle input changes
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
@@ -43,6 +44,7 @@ const CreateJob = () => {
     }
   };
   
+  // Handle array item changes (responsibilities, requirements, benefits)
   const handleArrayItemChange = (field, index, value) => {
     const newArray = [...formData[field]];
     newArray[index] = value;
@@ -53,6 +55,7 @@ const CreateJob = () => {
     }));
   };
   
+  // Add new array item
   const handleAddArrayItem = (field) => {
     setFormData(prev => ({
       ...prev,
@@ -60,6 +63,7 @@ const CreateJob = () => {
     }));
   };
   
+  // Remove array item
   const handleRemoveArrayItem = (field, index) => {
     if (formData[field].length === 1) return;
     
@@ -72,20 +76,13 @@ const CreateJob = () => {
     }));
   };
   
+  // Form validation
   const validateForm = () => {
     const newErrors = {};
     
-    if (!formData.title.trim()) {
-      newErrors.title = 'Job title is required';
-    }
-    
-    if (!formData.company.trim()) {
-      newErrors.company = 'Company name is required';
-    }
-    
-    if (!formData.location.trim() && !formData.isRemote) {
-      newErrors.location = 'Location is required for non-remote positions';
-    }
+    if (!formData.title.trim()) newErrors.title = 'Job title is required';
+    if (!formData.company.trim()) newErrors.company = 'Company name is required';
+    if (!formData.location.trim() && !formData.isRemote) newErrors.location = 'Location is required for non-remote positions';
     
     if (!formData.description.trim()) {
       newErrors.description = 'Job description is required';
@@ -105,7 +102,7 @@ const CreateJob = () => {
       }
     }
     
-    // Validate application deadline if provided
+    // Validate application deadline
     if (formData.applicationDeadline) {
       const deadlineDate = new Date(formData.applicationDeadline);
       const today = new Date();
@@ -121,6 +118,7 @@ const CreateJob = () => {
     return Object.keys(newErrors).length === 0;
   };
   
+  // Form submission handler
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -130,53 +128,49 @@ const CreateJob = () => {
     
     try {
       // In a real application, we would submit to the API
-      // const response = await api.job.createJob(formData);
+      // await api.job.createJob(formData);
+      
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
       toast.success('Job posting created successfully!');
       navigate('/employer/jobs');
     } catch (error) {
       console.error('Error creating job posting:', error);
-      const errorMessage = error.response?.data?.message || 'Failed to create job posting. Please try again.';
-      toast.error(errorMessage);
-      
-      // Set specific field errors if returned from API
-      if (error.response?.data?.errors) {
-        setErrors(error.response.data.errors);
-      }
+      toast.error('Failed to create job posting. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
   };
   
-  const employmentTypes = [
-    { value: 'full-time', label: 'Full-time' },
-    { value: 'part-time', label: 'Part-time' },
-    { value: 'contract', label: 'Contract' },
-    { value: 'freelance', label: 'Freelance' },
-    { value: 'internship', label: 'Internship' }
-  ];
-  
-  const experienceLevels = [
-    { value: 'entry-level', label: 'Entry Level' },
-    { value: 'mid-level', label: 'Mid Level' },
-    { value: 'senior-level', label: 'Senior Level' },
-    { value: 'manager', label: 'Manager' },
-    { value: 'executive', label: 'Executive' }
-  ];
-  
-  const currencies = [
-    { value: 'USD', label: 'USD ($)' },
-    { value: 'EUR', label: 'EUR (€)' },
-    { value: 'GBP', label: 'GBP (£)' },
-    { value: 'TRY', label: 'TRY (₺)' }
-  ];
-  
-  const periods = [
-    { value: 'hourly', label: 'Per Hour' },
-    { value: 'monthly', label: 'Per Month' },
-    { value: 'yearly', label: 'Per Year' }
-  ];
-  
+  // Form options
+  const options = {
+    employmentTypes: [
+      { value: 'full-time', label: 'Full-time' },
+      { value: 'part-time', label: 'Part-time' },
+      { value: 'contract', label: 'Contract' },
+      { value: 'freelance', label: 'Freelance' },
+      { value: 'internship', label: 'Internship' }
+    ],
+    experienceLevels: [
+      { value: 'entry-level', label: 'Entry Level' },
+      { value: 'mid-level', label: 'Mid Level' },
+      { value: 'senior-level', label: 'Senior Level' },
+      { value: 'manager', label: 'Manager' },
+      { value: 'executive', label: 'Executive' }
+    ],
+    currencies: [
+      { value: 'USD', label: 'USD ($)' },
+      { value: 'EUR', label: 'EUR (€)' },
+      { value: 'GBP', label: 'GBP (£)' }
+    ],
+    periods: [
+      { value: 'hourly', label: 'Per Hour' },
+      { value: 'monthly', label: 'Per Month' },
+      { value: 'yearly', label: 'Per Year' }
+    ]
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-sm">
       <div className="px-6 py-5 border-b border-gray-200">
@@ -199,9 +193,7 @@ const CreateJob = () => {
               name="title"
               value={formData.title}
               onChange={handleChange}
-              className={`mt-1 block w-full rounded-md shadow-sm sm:text-sm ${
-                errors.title ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
-              }`}
+              className={`form-input ${errors.title ? 'error' : ''}`}
               placeholder="e.g. Software Engineer, Marketing Manager"
             />
             {errors.title && (
@@ -220,9 +212,7 @@ const CreateJob = () => {
               name="company"
               value={formData.company}
               onChange={handleChange}
-              className={`mt-1 block w-full rounded-md shadow-sm sm:text-sm ${
-                errors.company ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
-              }`}
+              className={`form-input ${errors.company ? 'error' : ''}`}
               placeholder="e.g. Acme Inc."
             />
             {errors.company && (
@@ -259,9 +249,7 @@ const CreateJob = () => {
               value={formData.location}
               onChange={handleChange}
               disabled={formData.isRemote}
-              className={`mt-1 block w-full rounded-md shadow-sm sm:text-sm ${
-                errors.location ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
-              } ${formData.isRemote ? 'bg-gray-100' : ''}`}
+              className={`form-input ${errors.location ? 'error' : ''} ${formData.isRemote ? 'bg-gray-100' : ''}`}
               placeholder="e.g. New York, NY"
             />
             {errors.location && (
@@ -279,9 +267,9 @@ const CreateJob = () => {
               name="employmentType"
               value={formData.employmentType}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-select"
             >
-              {employmentTypes.map(type => (
+              {options.employmentTypes.map(type => (
                 <option key={type.value} value={type.value}>
                   {type.label}
                 </option>
@@ -299,78 +287,14 @@ const CreateJob = () => {
               name="experienceLevel"
               value={formData.experienceLevel}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-select"
             >
-              {experienceLevels.map(level => (
+              {options.experienceLevels.map(level => (
                 <option key={level.value} value={level.value}>
                   {level.label}
                 </option>
               ))}
             </select>
-          </div>
-          
-          {/* Salary Range */}
-          <div className="col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Salary Range (Optional)
-            </label>
-            <div className="grid grid-cols-6 gap-2">
-              <div className="col-span-1">
-                <select
-                  id="salaryCurrency"
-                  name="salaryCurrency"
-                  value={formData.salaryCurrency}
-                  onChange={handleChange}
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                >
-                  {currencies.map(currency => (
-                    <option key={currency.value} value={currency.value}>
-                      {currency.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="col-span-2">
-                <input
-                  type="number"
-                  id="salaryMin"
-                  name="salaryMin"
-                  value={formData.salaryMin}
-                  onChange={handleChange}
-                  placeholder="Min"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                />
-              </div>
-              <div className="col-span-2">
-                <input
-                  type="number"
-                  id="salaryMax"
-                  name="salaryMax"
-                  value={formData.salaryMax}
-                  onChange={handleChange}
-                  placeholder="Max"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                />
-              </div>
-              <div className="col-span-1">
-                <select
-                  id="salaryPeriod"
-                  name="salaryPeriod"
-                  value={formData.salaryPeriod}
-                  onChange={handleChange}
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                >
-                  {periods.map(period => (
-                    <option key={period.value} value={period.value}>
-                      {period.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            {errors.salary && (
-              <p className="mt-1 text-sm text-red-600">{errors.salary}</p>
-            )}
           </div>
           
           {/* Job Description */}
@@ -384,9 +308,7 @@ const CreateJob = () => {
               rows={5}
               value={formData.description}
               onChange={handleChange}
-              className={`mt-1 block w-full rounded-md shadow-sm sm:text-sm ${
-                errors.description ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
-              }`}
+              className={`form-textarea ${errors.description ? 'error' : ''}`}
               placeholder="Describe the role, the company, and what you're looking for in a candidate"
             />
             {errors.description && (
@@ -406,9 +328,9 @@ const CreateJob = () => {
               <button
                 type="button"
                 onClick={() => handleAddArrayItem('responsibilities')}
-                className="inline-flex items-center px-2 py-1 text-sm font-medium text-blue-600 hover:text-blue-500"
+                className="text-sm text-blue-600 hover:text-blue-500"
               >
-                <Plus className="h-4 w-4 mr-1" />
+                <Plus className="h-4 w-4 mr-1 inline" />
                 Add Another
               </button>
             </div>
@@ -419,14 +341,14 @@ const CreateJob = () => {
                   type="text"
                   value={responsibility}
                   onChange={(e) => handleArrayItemChange('responsibilities', index, e.target.value)}
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                  className="form-input"
                   placeholder={`Responsibility ${index + 1}`}
                 />
                 <button
                   type="button"
                   onClick={() => handleRemoveArrayItem('responsibilities', index)}
                   disabled={formData.responsibilities.length === 1}
-                  className="ml-2 inline-flex items-center px-2 py-1 text-sm text-gray-500 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="ml-2 text-gray-500 hover:text-gray-700 disabled:opacity-50"
                 >
                   <Minus className="h-4 w-4" />
                 </button>
@@ -443,9 +365,9 @@ const CreateJob = () => {
               <button
                 type="button"
                 onClick={() => handleAddArrayItem('requirements')}
-                className="inline-flex items-center px-2 py-1 text-sm font-medium text-blue-600 hover:text-blue-500"
+                className="text-sm text-blue-600 hover:text-blue-500"
               >
-                <Plus className="h-4 w-4 mr-1" />
+                <Plus className="h-4 w-4 mr-1 inline" />
                 Add Another
               </button>
             </div>
@@ -456,14 +378,14 @@ const CreateJob = () => {
                   type="text"
                   value={requirement}
                   onChange={(e) => handleArrayItemChange('requirements', index, e.target.value)}
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                  className="form-input"
                   placeholder={`Requirement ${index + 1}`}
                 />
                 <button
                   type="button"
                   onClick={() => handleRemoveArrayItem('requirements', index)}
                   disabled={formData.requirements.length === 1}
-                  className="ml-2 inline-flex items-center px-2 py-1 text-sm text-gray-500 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="ml-2 text-gray-500 hover:text-gray-700 disabled:opacity-50"
                 >
                   <Minus className="h-4 w-4" />
                 </button>
@@ -471,70 +393,85 @@ const CreateJob = () => {
             ))}
           </div>
           
-          {/* Benefits */}
-          <div className="col-span-2 mt-6">
-            <div className="flex items-center justify-between">
-              <label className="block text-sm font-medium text-gray-700">
-                Benefits (Optional)
-              </label>
-              <button
-                type="button"
-                onClick={() => handleAddArrayItem('benefits')}
-                className="inline-flex items-center px-2 py-1 text-sm font-medium text-blue-600 hover:text-blue-500"
+          {/* Salary Range */}
+          <div className="col-span-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Salary Range (Optional)
+            </label>
+            <div className="grid grid-cols-6 gap-2 mt-1">
+              <select
+                id="salaryCurrency"
+                name="salaryCurrency"
+                value={formData.salaryCurrency}
+                onChange={handleChange}
+                className="col-span-1 form-select"
               >
-                <Plus className="h-4 w-4 mr-1" />
-                Add Another
-              </button>
+                {options.currencies.map(currency => (
+                  <option key={currency.value} value={currency.value}>
+                    {currency.label}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="number"
+                id="salaryMin"
+                name="salaryMin"
+                value={formData.salaryMin}
+                onChange={handleChange}
+                placeholder="Min"
+                className="col-span-2 form-input"
+              />
+              <input
+                type="number"
+                id="salaryMax"
+                name="salaryMax"
+                value={formData.salaryMax}
+                onChange={handleChange}
+                placeholder="Max"
+                className="col-span-2 form-input"
+              />
+              <select
+                id="salaryPeriod"
+                name="salaryPeriod"
+                value={formData.salaryPeriod}
+                onChange={handleChange}
+                className="col-span-1 form-select"
+              >
+                {options.periods.map(period => (
+                  <option key={period.value} value={period.value}>
+                    {period.label}
+                  </option>
+                ))}
+              </select>
             </div>
-            
-            {formData.benefits.map((benefit, index) => (
-              <div key={`benefit-${index}`} className="mt-2 flex">
-                <input
-                  type="text"
-                  value={benefit}
-                  onChange={(e) => handleArrayItemChange('benefits', index, e.target.value)}
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                  placeholder={`Benefit ${index + 1}`}
-                />
-                <button
-                  type="button"
-                  onClick={() => handleRemoveArrayItem('benefits', index)}
-                  disabled={formData.benefits.length === 1}
-                  className="ml-2 inline-flex items-center px-2 py-1 text-sm text-gray-500 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <Minus className="h-4 w-4" />
-                </button>
-              </div>
-            ))}
+            {errors.salary && (
+              <p className="mt-1 text-sm text-red-600">{errors.salary}</p>
+            )}
           </div>
           
           {/* Application Deadline */}
-          <div className="col-span-2 mt-6">
+          <div className="col-span-2">
             <label htmlFor="applicationDeadline" className="block text-sm font-medium text-gray-700">
               Application Deadline (Optional)
             </label>
-            <div className="mt-1">
-              <input
-                type="date"
-                id="applicationDeadline"
-                name="applicationDeadline"
-                value={formData.applicationDeadline}
-                onChange={handleChange}
-                className={`block w-full rounded-md shadow-sm sm:text-sm ${
-                  errors.applicationDeadline ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
-                }`}
-              />
-              {errors.applicationDeadline && (
-                <p className="mt-1 text-sm text-red-600">{errors.applicationDeadline}</p>
-              )}
-            </div>
+            <input
+              type="date"
+              id="applicationDeadline"
+              name="applicationDeadline"
+              value={formData.applicationDeadline}
+              onChange={handleChange}
+              className={`form-input ${errors.applicationDeadline ? 'error' : ''}`}
+            />
+            {errors.applicationDeadline && (
+              <p className="mt-1 text-sm text-red-600">{errors.applicationDeadline}</p>
+            )}
           </div>
         </div>
         
         <div className="mt-8 flex justify-end">
           <button
             type="button"
-            className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="btn-secondary mr-3"
             onClick={() => navigate('/employer/jobs')}
           >
             Cancel
@@ -542,7 +479,7 @@ const CreateJob = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="ml-3 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-primary"
           >
             {isSubmitting ? 'Creating...' : 'Create Job Posting'}
           </button>
