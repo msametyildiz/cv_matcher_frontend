@@ -1,25 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Search,
-  Filter,
-  RefreshCw,
-  Trash2,
-  Edit,
-  User,
-  UserPlus,
-  Mail,
-  Lock,
-  Check,
-  X,
-  ChevronsUpDown,
-  ChevronUp,
-  ChevronDown,
-  MoreHorizontal,
-  ShieldAlert,
-  ShieldCheck,
-  Clock,
-  CheckCircle,
-  AlertCircle
+  Search, Filter, RefreshCw, Trash2, Edit, User, UserPlus, 
+  ChevronsUpDown, ChevronUp, ChevronDown, ShieldCheck, 
+  CheckCircle, AlertCircle, Clock, Check, X
 } from 'lucide-react';
 import { useApi } from '../../hooks/useApi';
 import { useDebounce } from '../../hooks/useDebounce';
@@ -46,20 +29,16 @@ const UserManagement = () => {
   });
   const [formErrors, setFormErrors] = useState({});
   
-  // Filters
+  // Filters and sorting
   const [filters, setFilters] = useState({
     role: 'all',
     status: 'all',
     dateRange: 'all'
   });
-  
-  // Sort
   const [sortConfig, setSortConfig] = useState({
     key: 'createdAt',
     direction: 'desc'
   });
-  
-  // Pagination
   const [pagination, setPagination] = useState({
     page: 1,
     perPage: 10,
@@ -69,7 +48,7 @@ const UserManagement = () => {
   // Notifications
   const { success, error: showError } = useNotification();
   
-  // Fetch users
+  // Fetch users API hook
   const { 
     data, 
     loading, 
@@ -88,13 +67,8 @@ const UserManagement = () => {
     },
     autoFetch: true,
     dependencies: [
-      debouncedSearchQuery, 
-      filters.role, 
-      filters.status, 
-      filters.dateRange,
-      pagination.page,
-      sortConfig.key,
-      sortConfig.direction
+      debouncedSearchQuery, filters.role, filters.status, filters.dateRange,
+      pagination.page, sortConfig.key, sortConfig.direction
     ]
   });
 
@@ -102,145 +76,61 @@ const UserManagement = () => {
   useEffect(() => {
     if (data) {
       setUsers(data.users || []);
-      setPagination(prev => ({
-        ...prev,
-        total: data.total || 0
-      }));
+      setPagination(prev => ({ ...prev, total: data.total || 0 }));
     }
   }, [data]);
 
   // Mock data for development
   useEffect(() => {
-    // Simulate API data
-    const mockUsers = [
-      {
-        id: 1,
-        name: 'John Smith',
-        email: 'john.smith@example.com',
-        role: 'candidate',
-        status: 'active',
-        createdAt: '2023-04-15T10:30:00Z',
-        lastLogin: '2023-05-10T08:45:00Z',
-        emailVerified: true,
-        cvCount: 2,
-        applicationCount: 5,
-        avatar: null
-      },
-      {
-        id: 2,
-        name: 'Emily Johnson',
-        email: 'emily.johnson@example.com',
-        role: 'employer',
-        status: 'active',
-        createdAt: '2023-04-10T14:20:00Z',
-        lastLogin: '2023-05-09T16:30:00Z',
-        emailVerified: true,
-        companyName: 'Tech Solutions Inc.',
-        jobsPosted: 3,
-        avatar: null
-      },
-      {
-        id: 3,
-        name: 'David Wong',
-        email: 'david.wong@example.com',
-        role: 'candidate',
-        status: 'inactive',
-        createdAt: '2023-03-22T09:15:00Z',
-        lastLogin: '2023-04-01T11:20:00Z',
-        emailVerified: false,
-        cvCount: 1,
-        applicationCount: 0,
-        avatar: null
-      },
-      {
-        id: 4,
-        name: 'Admin User',
-        email: 'admin@cvmatcher.com',
-        role: 'admin',
-        status: 'active',
-        createdAt: '2023-01-01T00:00:00Z',
-        lastLogin: '2023-05-10T07:30:00Z',
-        emailVerified: true,
-        avatar: null
-      },
-      {
-        id: 5,
-        name: 'Sarah Miller',
-        email: 'sarah.miller@example.com',
-        role: 'candidate',
-        status: 'active',
-        createdAt: '2023-05-01T08:20:00Z',
-        lastLogin: '2023-05-10T10:15:00Z',
-        emailVerified: true,
-        cvCount: 1,
-        applicationCount: 2,
-        avatar: null
-      }
-    ];
-
-    const mockResponse = {
-      users: mockUsers,
-      total: 125,
-      page: 1,
-      perPage: 10
-    };
-
-    // Use mock data if no real data is available
     if (!data && !loading && !error) {
-      setUsers(mockResponse.users);
-      setPagination(prev => ({
-        ...prev,
-        total: mockResponse.total
-      }));
+      const mockUsers = [
+        {
+          id: 1,
+          name: 'John Smith',
+          email: 'john.smith@example.com',
+          role: 'candidate',
+          status: 'active',
+          createdAt: '2023-04-15T10:30:00Z',
+          lastLogin: '2023-05-10T08:45:00Z',
+          emailVerified: true,
+          cvCount: 2,
+          applicationCount: 5,
+          avatar: null
+        },
+        {
+          id: 2,
+          name: 'Emily Johnson',
+          email: 'emily.johnson@example.com',
+          role: 'employer',
+          status: 'active',
+          createdAt: '2023-04-10T14:20:00Z',
+          lastLogin: '2023-05-09T16:30:00Z',
+          emailVerified: true,
+          companyName: 'Tech Solutions Inc.',
+          jobsPosted: 3,
+          avatar: null
+        },
+        {
+          id: 3,
+          name: 'Admin User',
+          email: 'admin@cvmatcher.com',
+          role: 'admin',
+          status: 'active',
+          createdAt: '2023-01-01T00:00:00Z',
+          lastLogin: '2023-05-10T07:30:00Z',
+          emailVerified: true,
+          avatar: null
+        }
+      ];
+
+      setUsers(mockUsers);
+      setPagination(prev => ({ ...prev, total: 125 }));
     }
   }, [data, loading, error]);
 
-  // Filter change handler
-  const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    setFilters(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    // Reset to first page when filters change
-    setPagination(prev => ({
-      ...prev,
-      page: 1
-    }));
-  };
-
-  // Sort handler
-  const handleSort = (key) => {
-    setSortConfig(prev => {
-      if (prev.key === key) {
-        return {
-          key,
-          direction: prev.direction === 'asc' ? 'desc' : 'asc'
-        };
-      }
-      return {
-        key,
-        direction: 'asc'
-      };
-    });
-  };
-
-  // Get sort icon based on current sort config
-  const getSortIcon = (key) => {
-    if (sortConfig.key !== key) {
-      return <ChevronsUpDown className="h-4 w-4" />;
-    }
-    return sortConfig.direction === 'asc' ? 
-      <ChevronUp className="h-4 w-4" /> : 
-      <ChevronDown className="h-4 w-4" />;
-  };
-
-  // Format date for display
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleString();
-  };
-
-  // Get relative time for last login
+  // Helper functions
+  const formatDate = (dateString) => new Date(dateString).toLocaleString();
+  
   const getRelativeTime = (dateString) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -249,24 +139,102 @@ const UserManagement = () => {
     
     if (diffDays === 0) {
       const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-      if (diffHours === 0) {
-        const diffMinutes = Math.floor(diffMs / (1000 * 60));
-        return `${diffMinutes} minutes ago`;
-      }
+      if (diffHours === 0) return `${Math.floor(diffMs / (1000 * 60))} minutes ago`;
       return `${diffHours} hours ago`;
     } else if (diffDays === 1) {
       return 'Yesterday';
     } else if (diffDays < 7) {
       return `${diffDays} days ago`;
     } else if (diffDays < 30) {
-      const diffWeeks = Math.floor(diffDays / 7);
-      return `${diffWeeks} weeks ago`;
-    } else {
-      return formatDate(dateString);
+      return `${Math.floor(diffDays / 7)} weeks ago`;
     }
+    return formatDate(dateString);
   };
 
-  // Handle opening edit modal
+  const getSortIcon = (key) => {
+    if (sortConfig.key !== key) return <ChevronsUpDown className="h-4 w-4" />;
+    return sortConfig.direction === 'asc' ? 
+      <ChevronUp className="h-4 w-4" /> : 
+      <ChevronDown className="h-4 w-4" />;
+  };
+
+  const renderUserAvatar = (user) => {
+    if (user.avatar) {
+      return <img className="h-10 w-10 rounded-full" src={user.avatar} alt={user.name} />;
+    }
+    return (
+      <div className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center text-white">
+        {user.name.charAt(0).toUpperCase()}
+      </div>
+    );
+  };
+
+  const renderUserStatus = (user) => {
+    const statusConfig = {
+      active: { bg: 'bg-green-100', text: 'text-green-800', icon: <CheckCircle className="mr-1 h-3 w-3" /> },
+      inactive: { bg: 'bg-yellow-100', text: 'text-yellow-800', icon: <Clock className="mr-1 h-3 w-3" /> },
+      suspended: { bg: 'bg-red-100', text: 'text-red-800', icon: <AlertCircle className="mr-1 h-3 w-3" /> }
+    };
+    const config = statusConfig[user.status];
+    
+    return (
+      <>
+        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${config.bg} ${config.text}`}>
+          {config.icon}
+          {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
+        </span>
+        <div className="text-xs text-gray-500 mt-1 flex items-center">
+          {user.emailVerified ? (
+            <>
+              <Check className="h-3 w-3 text-green-500 mr-1" />
+              Verified
+            </>
+          ) : (
+            <>
+              <X className="h-3 w-3 text-red-500 mr-1" />
+              Unverified
+            </>
+          )}
+        </div>
+      </>
+    );
+  };
+
+  const renderRoleBadge = (user) => {
+    const roleConfig = {
+      admin: { bg: 'bg-purple-100', text: 'text-purple-800', icon: <ShieldCheck className="mr-1 h-3 w-3" /> },
+      employer: { bg: 'bg-blue-100', text: 'text-blue-800', icon: <Briefcase className="mr-1 h-3 w-3" /> },
+      candidate: { bg: 'bg-green-100', text: 'text-green-800', icon: <User className="mr-1 h-3 w-3" /> }
+    };
+    const config = roleConfig[user.role];
+    
+    return (
+      <>
+        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${config.bg} ${config.text}`}>
+          {config.icon}
+          {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+        </span>
+        {user.role === 'employer' && user.companyName && (
+          <div className="text-xs text-gray-500 mt-1">{user.companyName}</div>
+        )}
+      </>
+    );
+  };
+
+  // Event handlers
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters(prev => ({ ...prev, [name]: value }));
+    setPagination(prev => ({ ...prev, page: 1 }));
+  };
+
+  const handleSort = (key) => {
+    setSortConfig(prev => ({
+      key,
+      direction: prev.key === key ? (prev.direction === 'asc' ? 'desc' : 'asc') : 'asc'
+    }));
+  };
+
   const handleEditClick = (user) => {
     setSelectedUser(user);
     setUserForm({
@@ -274,123 +242,16 @@ const UserManagement = () => {
       email: user.email,
       role: user.role,
       status: user.status,
-      password: '' // Don't show password in edit form
+      password: ''
     });
     setShowEditModal(true);
   };
 
-  // Handle opening delete modal
   const handleDeleteClick = (user) => {
     setSelectedUser(user);
     setShowDeleteModal(true);
   };
 
-  // Handle form input change
-  const handleFormChange = (e) => {
-    const { name, value } = e.target;
-    setUserForm(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    
-    // Clear any previous error for this field
-    if (formErrors[name]) {
-      setFormErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }));
-    }
-  };
-
-  // Validate form inputs
-  const validateForm = () => {
-    const errors = {};
-    
-    if (!userForm.name.trim()) {
-      errors.name = 'Name is required';
-    }
-    
-    if (!userForm.email.trim()) {
-      errors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(userForm.email)) {
-      errors.email = 'Email is invalid';
-    }
-    
-    // If adding a new user or changing password, require a password
-    if ((!selectedUser || userForm.password) && userForm.password.length < 8) {
-      errors.password = 'Password must be at least 8 characters';
-    }
-    
-    setFormErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
-
-  // Submit handler for adding/editing user
-  const handleSubmitUser = async (e) => {
-    e.preventDefault();
-    
-    if (!validateForm()) return;
-    
-    try {
-      if (selectedUser) {
-        // Update existing user (in a real app, this would call the API)
-        // const response = await api.put(`/api/admin/users/${selectedUser.id}`, userForm);
-        
-        // Update user in local state
-        setUsers(prevUsers => 
-          prevUsers.map(user => 
-            user.id === selectedUser.id ? { ...user, ...userForm } : user
-          )
-        );
-        
-        success('User updated successfully');
-        setShowEditModal(false);
-      } else {
-        // Add new user (in a real app, this would call the API)
-        // const response = await api.post('/api/admin/users', userForm);
-        
-        // Add user to local state with mock ID
-        const newUser = {
-          id: Math.max(...users.map(u => u.id)) + 1,
-          ...userForm,
-          createdAt: new Date().toISOString(),
-          lastLogin: null,
-          emailVerified: false,
-          avatar: null
-        };
-        
-        setUsers(prevUsers => [newUser, ...prevUsers]);
-        
-        success('User added successfully');
-        setShowAddModal(false);
-      }
-    } catch (err) {
-      showError(selectedUser ? 'Failed to update user' : 'Failed to add user');
-      
-      // Handle validation errors from API
-      if (err.response?.data?.errors) {
-        setFormErrors(err.response.data.errors);
-      }
-    }
-  };
-
-  // Delete user
-  const confirmDelete = async () => {
-    try {
-      // Delete user (in a real app, this would call the API)
-      // await api.delete(`/api/admin/users/${selectedUser.id}`);
-      
-      // Remove user from local state
-      setUsers(prevUsers => prevUsers.filter(user => user.id !== selectedUser.id));
-      
-      success('User deleted successfully');
-      setShowDeleteModal(false);
-    } catch (err) {
-      showError('Failed to delete user');
-    }
-  };
-
-  // Reset the form for adding a new user
   const handleAddUser = () => {
     setSelectedUser(null);
     setUserForm({
@@ -404,7 +265,78 @@ const UserManagement = () => {
     setShowAddModal(true);
   };
 
-  // Render user details for modals
+  const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    setUserForm(prev => ({ ...prev, [name]: value }));
+    if (formErrors[name]) {
+      setFormErrors(prev => ({ ...prev, [name]: '' }));
+    }
+  };
+
+  const validateForm = () => {
+    const errors = {};
+    
+    if (!userForm.name.trim()) errors.name = 'Name is required';
+    
+    if (!userForm.email.trim()) {
+      errors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(userForm.email)) {
+      errors.email = 'Email is invalid';
+    }
+    
+    if ((!selectedUser || userForm.password) && userForm.password.length < 8) {
+      errors.password = 'Password must be at least 8 characters';
+    }
+    
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleSubmitUser = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+    
+    try {
+      if (selectedUser) {
+        // Update existing user
+        setUsers(prevUsers => 
+          prevUsers.map(user => user.id === selectedUser.id ? { ...user, ...userForm } : user)
+        );
+        success('User updated successfully');
+        setShowEditModal(false);
+      } else {
+        // Add new user with mock ID
+        const newUser = {
+          id: Math.max(...users.map(u => u.id)) + 1,
+          ...userForm,
+          createdAt: new Date().toISOString(),
+          lastLogin: null,
+          emailVerified: false,
+          avatar: null
+        };
+        setUsers(prevUsers => [newUser, ...prevUsers]);
+        success('User added successfully');
+        setShowAddModal(false);
+      }
+    } catch (err) {
+      showError(selectedUser ? 'Failed to update user' : 'Failed to add user');
+      if (err.response?.data?.errors) {
+        setFormErrors(err.response.data.errors);
+      }
+    }
+  };
+
+  const confirmDelete = async () => {
+    try {
+      setUsers(prevUsers => prevUsers.filter(user => user.id !== selectedUser.id));
+      success('User deleted successfully');
+      setShowDeleteModal(false);
+    } catch (err) {
+      showError('Failed to delete user');
+    }
+  };
+
+  // UI Components
   const renderUserDetails = () => {
     if (!selectedUser) return null;
     
@@ -412,17 +344,7 @@ const UserManagement = () => {
       <div className="mb-4 bg-gray-50 p-4 rounded-lg">
         <div className="flex items-center">
           <div className="flex-shrink-0">
-            {selectedUser.avatar ? (
-              <img
-                className="h-10 w-10 rounded-full"
-                src={selectedUser.avatar}
-                alt={selectedUser.name}
-              />
-            ) : (
-              <div className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center text-white">
-                {selectedUser.name.charAt(0).toUpperCase()}
-              </div>
-            )}
+            {renderUserAvatar(selectedUser)}
           </div>
           <div className="ml-4">
             <h3 className="text-lg font-medium text-gray-900">{selectedUser.name}</h3>
@@ -430,27 +352,125 @@ const UserManagement = () => {
           </div>
         </div>
         <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-gray-600">
-          <div>
-            <span className="font-medium">Role:</span> {selectedUser.role}
-          </div>
-          <div>
-            <span className="font-medium">Status:</span> {selectedUser.status}
-          </div>
-          <div>
-            <span className="font-medium">Created:</span> {formatDate(selectedUser.createdAt)}
-          </div>
+          <div><span className="font-medium">Role:</span> {selectedUser.role}</div>
+          <div><span className="font-medium">Status:</span> {selectedUser.status}</div>
+          <div><span className="font-medium">Created:</span> {formatDate(selectedUser.createdAt)}</div>
           {selectedUser.lastLogin && (
-            <div>
-              <span className="font-medium">Last Login:</span> {getRelativeTime(selectedUser.lastLogin)}
-            </div>
+            <div><span className="font-medium">Last Login:</span> {getRelativeTime(selectedUser.lastLogin)}</div>
           )}
         </div>
       </div>
     );
   };
 
+  const renderUserForm = () => (
+    <form onSubmit={handleSubmitUser}>
+      <div className="space-y-4">
+        {/* Name field */}
+        <div>
+          <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={userForm.name}
+            onChange={handleFormChange}
+            className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm ${
+              formErrors.name ? 'border-red-300' : ''
+            }`}
+          />
+          {formErrors.name && <p className="mt-1 text-sm text-red-600">{formErrors.name}</p>}
+        </div>
+        
+        {/* Email field */}
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={userForm.email}
+            onChange={handleFormChange}
+            className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm ${
+              formErrors.email ? 'border-red-300' : ''
+            }`}
+          />
+          {formErrors.email && <p className="mt-1 text-sm text-red-600">{formErrors.email}</p>}
+        </div>
+        
+        {/* Role selector */}
+        <div>
+          <label htmlFor="role" className="block text-sm font-medium text-gray-700">Role</label>
+          <select
+            id="role"
+            name="role"
+            value={userForm.role}
+            onChange={handleFormChange}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+          >
+            <option value="candidate">Candidate</option>
+            <option value="employer">Employer</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+        
+        {/* Status selector */}
+        <div>
+          <label htmlFor="status" className="block text-sm font-medium text-gray-700">Status</label>
+          <select
+            id="status"
+            name="status"
+            value={userForm.status}
+            onChange={handleFormChange}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+          >
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+            <option value="suspended">Suspended</option>
+          </select>
+        </div>
+        
+        {/* Password field */}
+        <div>
+          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            {selectedUser ? 'Password (leave blank to keep current)' : 'Password'}
+          </label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value={userForm.password}
+            onChange={handleFormChange}
+            className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm ${
+              formErrors.password ? 'border-red-300' : ''
+            }`}
+          />
+          {formErrors.password && <p className="mt-1 text-sm text-red-600">{formErrors.password}</p>}
+        </div>
+      </div>
+      
+      {/* Form buttons */}
+      <div className="mt-6 flex justify-end space-x-3">
+        <button
+          type="button"
+          onClick={() => selectedUser ? setShowEditModal(false) : setShowAddModal(false)}
+          className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        >
+          {selectedUser ? 'Save Changes' : 'Add User'}
+        </button>
+      </div>
+    </form>
+  );
+
   return (
     <div className="max-w-7xl mx-auto">
+      {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
         
@@ -493,48 +513,45 @@ const UserManagement = () => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full md:w-2/3">
-              <div>
-                <select
-                  name="role"
-                  value={filters.role}
-                  onChange={handleFilterChange}
-                  className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
-                >
-                  <option value="all">All Roles</option>
-                  <option value="candidate">Candidates</option>
-                  <option value="employer">Employers</option>
-                  <option value="admin">Admins</option>
-                </select>
-              </div>
+              {/* Role filter */}
+              <select
+                name="role"
+                value={filters.role}
+                onChange={handleFilterChange}
+                className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+              >
+                <option value="all">All Roles</option>
+                <option value="candidate">Candidates</option>
+                <option value="employer">Employers</option>
+                <option value="admin">Admins</option>
+              </select>
               
-              <div>
-                <select
-                  name="status"
-                  value={filters.status}
-                  onChange={handleFilterChange}
-                  className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
-                >
-                  <option value="all">All Statuses</option>
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                  <option value="suspended">Suspended</option>
-                </select>
-              </div>
+              {/* Status filter */}
+              <select
+                name="status"
+                value={filters.status}
+                onChange={handleFilterChange}
+                className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+              >
+                <option value="all">All Statuses</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="suspended">Suspended</option>
+              </select>
               
-              <div>
-                <select
-                  name="dateRange"
-                  value={filters.dateRange}
-                  onChange={handleFilterChange}
-                  className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
-                >
-                  <option value="all">All Time</option>
-                  <option value="today">Today</option>
-                  <option value="week">This Week</option>
-                  <option value="month">This Month</option>
-                  <option value="year">This Year</option>
-                </select>
-              </div>
+              {/* Date filter */}
+              <select
+                name="dateRange"
+                value={filters.dateRange}
+                onChange={handleFilterChange}
+                className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+              >
+                <option value="all">All Time</option>
+                <option value="today">Today</option>
+                <option value="week">This Week</option>
+                <option value="month">This Month</option>
+                <option value="year">This Year</option>
+              </select>
             </div>
           </div>
         </div>
@@ -548,10 +565,9 @@ const UserManagement = () => {
           </h3>
         </div>
         
+        {/* Content section */}
         {loading ? (
-          <div className="p-6">
-            <Loader />
-          </div>
+          <div className="p-6"><Loader /></div>
         ) : error ? (
           <div className="p-6">
             <ErrorMessage message="Failed to load users. Please try again." onRetry={fetchUsers} />
@@ -560,71 +576,39 @@ const UserManagement = () => {
           <div className="p-6 text-center">
             <User className="mx-auto h-12 w-12 text-gray-400" />
             <h3 className="mt-2 text-sm font-medium text-gray-900">No Users Found</h3>
-            <p className="mt-1 text-sm text-gray-500">
-              Try adjusting your search or filter criteria.
-            </p>
+            <p className="mt-1 text-sm text-gray-500">Try adjusting your search or filter criteria.</p>
           </div>
         ) : (
           <>
+            {/* User table */}
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      <button
-                        className="group inline-flex items-center"
-                        onClick={() => handleSort('name')}
+                    {/* Column headers with sorting */}
+                    {[
+                      { key: 'name', label: 'User' },
+                      { key: 'role', label: 'Role' },
+                      { key: 'status', label: 'Status' },
+                      { key: 'createdAt', label: 'Created' },
+                      { key: 'lastLogin', label: 'Last Login' }
+                    ].map(column => (
+                      <th 
+                        key={column.key} 
+                        scope="col" 
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                       >
-                        User
-                        <span className="ml-2 flex-none text-gray-400 group-hover:visible group-focus:visible">
-                          {getSortIcon('name')}
-                        </span>
-                      </button>
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      <button
-                        className="group inline-flex items-center"
-                        onClick={() => handleSort('role')}
-                      >
-                        Role
-                        <span className="ml-2 flex-none text-gray-400 group-hover:visible group-focus:visible">
-                          {getSortIcon('role')}
-                        </span>
-                      </button>
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      <button
-                        className="group inline-flex items-center"
-                        onClick={() => handleSort('status')}
-                      >
-                        Status
-                        <span className="ml-2 flex-none text-gray-400 group-hover:visible group-focus:visible">
-                          {getSortIcon('status')}
-                        </span>
-                      </button>
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      <button
-                        className="group inline-flex items-center"
-                        onClick={() => handleSort('createdAt')}
-                      >
-                        Created
-                        <span className="ml-2 flex-none text-gray-400 group-hover:visible group-focus:visible">
-                          {getSortIcon('createdAt')}
-                        </span>
-                      </button>
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      <button
-                        className="group inline-flex items-center"
-                        onClick={() => handleSort('lastLogin')}
-                      >
-                        Last Login
-                        <span className="ml-2 flex-none text-gray-400 group-hover:visible group-focus:visible">
-                          {getSortIcon('lastLogin')}
-                        </span>
-                      </button>
-                    </th>
+                        <button
+                          className="group inline-flex items-center"
+                          onClick={() => handleSort(column.key)}
+                        >
+                          {column.label}
+                          <span className="ml-2 flex-none text-gray-400 group-hover:visible group-focus:visible">
+                            {getSortIcon(column.key)}
+                          </span>
+                        </button>
+                      </th>
+                    ))}
                     <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Actions
                     </th>
@@ -633,20 +617,11 @@ const UserManagement = () => {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {users.map((user) => (
                     <tr key={user.id} className="hover:bg-gray-50">
+                      {/* User info */}
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="flex-shrink-0 h-10 w-10">
-                            {user.avatar ? (
-                              <img
-                                className="h-10 w-10 rounded-full"
-                                src={user.avatar}
-                                alt={user.name}
-                              />
-                            ) : (
-                              <div className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center text-white">
-                                {user.name.charAt(0).toUpperCase()}
-                              </div>
-                            )}
+                            {renderUserAvatar(user)}
                           </div>
                           <div className="ml-4">
                             <div className="text-sm font-medium text-gray-900">{user.name}</div>
@@ -654,52 +629,28 @@ const UserManagement = () => {
                           </div>
                         </div>
                       </td>
+                      
+                      {/* Role */}
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          user.role === 'admin' ? 'bg-purple-100 text-purple-800' :
-                          user.role === 'employer' ? 'bg-blue-100 text-blue-800' :
-                          'bg-green-100 text-green-800'
-                        }`}>
-                          {user.role === 'admin' ? <ShieldCheck className="mr-1 h-3 w-3" /> : 
-                           user.role === 'employer' ? <Briefcase className="mr-1 h-3 w-3" /> :
-                           <User className="mr-1 h-3 w-3" />}
-                          {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
-                        </span>
-                        {user.role === 'employer' && user.companyName && (
-                          <div className="text-xs text-gray-500 mt-1">{user.companyName}</div>
-                        )}
+                        {renderRoleBadge(user)}
                       </td>
+                      
+                      {/* Status */}
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          user.status === 'active' ? 'bg-green-100 text-green-800' :
-                          user.status === 'inactive' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-red-100 text-red-800'
-                        }`}>
-                          {user.status === 'active' ? <CheckCircle className="mr-1 h-3 w-3" /> : 
-                           user.status === 'inactive' ? <Clock className="mr-1 h-3 w-3" /> :
-                           <AlertCircle className="mr-1 h-3 w-3" />}
-                          {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
-                        </span>
-                        <div className="text-xs text-gray-500 mt-1 flex items-center">
-                          {user.emailVerified ? (
-                            <>
-                              <Check className="h-3 w-3 text-green-500 mr-1" />
-                              Verified
-                            </>
-                          ) : (
-                            <>
-                              <X className="h-3 w-3 text-red-500 mr-1" />
-                              Unverified
-                            </>
-                          )}
-                        </div>
+                        {renderUserStatus(user)}
                       </td>
+                      
+                      {/* Created date */}
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {formatDate(user.createdAt)}
                       </td>
+                      
+                      {/* Last login */}
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {user.lastLogin ? getRelativeTime(user.lastLogin) : 'Never'}
                       </td>
+                      
+                      {/* Actions */}
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <div className="flex space-x-2 justify-end">
                           <button
@@ -725,32 +676,17 @@ const UserManagement = () => {
             
             {/* Pagination */}
             <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
-              <div className="flex-1 flex justify-between sm:hidden">
-                <button
-                  onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
-                  disabled={pagination.page === 1}
-                  className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Previous
-                </button>
-                <button
-                  onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
-                  disabled={pagination.page * pagination.perPage >= pagination.total}
-                  className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Next
-                </button>
-              </div>
               <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                 <div>
                   <p className="text-sm text-gray-700">
-                    Showing <span className="font-medium">{(pagination.page - 1) * pagination.perPage + 1}</span> to <span className="font-medium">
-                      {Math.min(pagination.page * pagination.perPage, pagination.total)}
-                    </span> of <span className="font-medium">{pagination.total}</span> users
+                    Showing <span className="font-medium">{(pagination.page - 1) * pagination.perPage + 1}</span> to{' '}
+                    <span className="font-medium">{Math.min(pagination.page * pagination.perPage, pagination.total)}</span> of{' '}
+                    <span className="font-medium">{pagination.total}</span> users
                   </p>
                 </div>
                 <div>
                   <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                    {/* Previous button */}
                     <button
                       onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
                       disabled={pagination.page === 1}
@@ -760,7 +696,7 @@ const UserManagement = () => {
                       <ChevronDown className="h-5 w-5 rotate-90" />
                     </button>
                     
-                    {/* Generate page buttons */}
+                    {/* Page numbers */}
                     {Array.from({ length: Math.min(5, Math.ceil(pagination.total / pagination.perPage)) }).map((_, idx) => {
                       const pageNumber = idx + 1;
                       return (
@@ -778,6 +714,7 @@ const UserManagement = () => {
                       );
                     })}
                     
+                    {/* Next button */}
                     <button
                       onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
                       disabled={pagination.page * pagination.perPage >= pagination.total}
@@ -803,117 +740,7 @@ const UserManagement = () => {
       >
         <div className="p-6">
           {renderUserDetails()}
-          
-          <form onSubmit={handleSubmitUser}>
-            <div className="space-y-4">
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                  Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={userForm.name}
-                  onChange={handleFormChange}
-                  className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm ${
-                    formErrors.name ? 'border-red-300' : ''
-                  }`}
-                />
-                {formErrors.name && (
-                  <p className="mt-1 text-sm text-red-600">{formErrors.name}</p>
-                )}
-              </div>
-              
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={userForm.email}
-                  onChange={handleFormChange}
-                  className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm ${
-                    formErrors.email ? 'border-red-300' : ''
-                  }`}
-                />
-                {formErrors.email && (
-                  <p className="mt-1 text-sm text-red-600">{formErrors.email}</p>
-                )}
-              </div>
-              
-              <div>
-                <label htmlFor="role" className="block text-sm font-medium text-gray-700">
-                  Role
-                </label>
-                <select
-                  id="role"
-                  name="role"
-                  value={userForm.role}
-                  onChange={handleFormChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                >
-                  <option value="candidate">Candidate</option>
-                  <option value="employer">Employer</option>
-                  <option value="admin">Admin</option>
-                </select>
-              </div>
-              
-              <div>
-                <label htmlFor="status" className="block text-sm font-medium text-gray-700">
-                  Status
-                </label>
-                <select
-                  id="status"
-                  name="status"
-                  value={userForm.status}
-                  onChange={handleFormChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                >
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                  <option value="suspended">Suspended</option>
-                </select>
-              </div>
-              
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                  Password (leave blank to keep current)
-                </label>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  value={userForm.password}
-                  onChange={handleFormChange}
-                  className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm ${
-                    formErrors.password ? 'border-red-300' : ''
-                  }`}
-                />
-                {formErrors.password && (
-                  <p className="mt-1 text-sm text-red-600">{formErrors.password}</p>
-                )}
-              </div>
-            </div>
-            
-            <div className="mt-6 flex justify-end space-x-3">
-              <button
-                type="button"
-                onClick={() => setShowEditModal(false)}
-                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                Save Changes
-              </button>
-            </div>
-          </form>
+          {renderUserForm()}
         </div>
       </Modal>
 
@@ -925,116 +752,7 @@ const UserManagement = () => {
         size="md"
       >
         <div className="p-6">
-          <form onSubmit={handleSubmitUser}>
-            <div className="space-y-4">
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                  Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={userForm.name}
-                  onChange={handleFormChange}
-                  className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm ${
-                    formErrors.name ? 'border-red-300' : ''
-                  }`}
-                />
-                {formErrors.name && (
-                  <p className="mt-1 text-sm text-red-600">{formErrors.name}</p>
-                )}
-              </div>
-              
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={userForm.email}
-                  onChange={handleFormChange}
-                  className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm ${
-                    formErrors.email ? 'border-red-300' : ''
-                  }`}
-                />
-                {formErrors.email && (
-                  <p className="mt-1 text-sm text-red-600">{formErrors.email}</p>
-                )}
-              </div>
-              
-              <div>
-                <label htmlFor="role" className="block text-sm font-medium text-gray-700">
-                  Role
-                </label>
-                <select
-                  id="role"
-                  name="role"
-                  value={userForm.role}
-                  onChange={handleFormChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                >
-                  <option value="candidate">Candidate</option>
-                  <option value="employer">Employer</option>
-                  <option value="admin">Admin</option>
-                </select>
-              </div>
-              
-              <div>
-                <label htmlFor="status" className="block text-sm font-medium text-gray-700">
-                  Status
-                </label>
-                <select
-                  id="status"
-                  name="status"
-                  value={userForm.status}
-                  onChange={handleFormChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                >
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                  <option value="suspended">Suspended</option>
-                </select>
-              </div>
-              
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  value={userForm.password}
-                  onChange={handleFormChange}
-                  className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm ${
-                    formErrors.password ? 'border-red-300' : ''
-                  }`}
-                />
-                {formErrors.password && (
-                  <p className="mt-1 text-sm text-red-600">{formErrors.password}</p>
-                )}
-              </div>
-            </div>
-            
-            <div className="mt-6 flex justify-end space-x-3">
-              <button
-                type="button"
-                onClick={() => setShowAddModal(false)}
-                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                Add User
-              </button>
-            </div>
-          </form>
+          {renderUserForm()}
         </div>
       </Modal>
 
