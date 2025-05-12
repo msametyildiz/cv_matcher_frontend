@@ -1,14 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { 
-  Search, 
-  MapPin, 
-  Briefcase, 
-  Filter, 
-  X, 
-  ArrowUpDown, 
-  ChevronDown, 
-  Clock
+  Search, MapPin, Briefcase, Filter, X, 
+  ChevronDown, Clock
 } from 'lucide-react';
 import JobList from '../../components/candidate/JobList';
 import Loader from '../../components/common/Loader';
@@ -76,15 +70,6 @@ const JobSearch = () => {
     setError(null);
     
     try {
-      // In a real application, we would fetch jobs from the API
-      // const response = await api.job.searchJobs({
-      //   search: debouncedSearchQuery,
-      //   ...filters,
-      //   sort: sortBy,
-      //   page: pagination.page,
-      //   perPage: pagination.perPage
-      // });
-      
       // Mock data for demonstration
       await new Promise(resolve => setTimeout(resolve, 1000));
       
@@ -201,6 +186,7 @@ const JobSearch = () => {
         {showAdvancedFilters && (
           <div className="mt-4 pt-4 border-t border-gray-200">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Job Type */}
               <div>
                 <label htmlFor="jobType" className="block text-sm font-medium text-gray-700 mb-1">
                   Job Type
@@ -221,6 +207,7 @@ const JobSearch = () => {
                 </select>
               </div>
               
+              {/* Experience Level */}
               <div>
                 <label htmlFor="experience" className="block text-sm font-medium text-gray-700 mb-1">
                   Experience Level
@@ -240,6 +227,7 @@ const JobSearch = () => {
                 </select>
               </div>
               
+              {/* Salary Range */}
               <div>
                 <label htmlFor="salary" className="block text-sm font-medium text-gray-700 mb-1">
                   Salary Range
@@ -260,6 +248,7 @@ const JobSearch = () => {
                 </select>
               </div>
               
+              {/* Date Posted */}
               <div>
                 <label htmlFor="postedDate" className="block text-sm font-medium text-gray-700 mb-1">
                   Date Posted
@@ -318,6 +307,7 @@ const JobSearch = () => {
             <div className="flex items-center">
               <span className="text-sm text-gray-500 mr-2">Active filters:</span>
               <div className="flex flex-wrap gap-2">
+                {/* Display active filters as tags */}
                 {searchQuery && (
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                     {searchQuery}
@@ -332,61 +322,7 @@ const JobSearch = () => {
                   </span>
                 )}
                 
-                {filters.location && (
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                    {filters.location}
-                    <button 
-                      type="button"
-                      className="ml-1.5 inline-flex items-center justify-center h-4 w-4 rounded-full text-blue-400 hover:bg-blue-200 hover:text-blue-500 focus:outline-none focus:bg-blue-500 focus:text-white"
-                      onClick={() => setFilters(prev => ({ ...prev, location: '' }))}
-                    >
-                      <span className="sr-only">Remove filter</span>
-                      <X className="h-3 w-3" />
-                    </button>
-                  </span>
-                )}
-                
-                {filters.jobType !== 'all' && (
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                    {filters.jobType.replace('-', ' ')}
-                    <button 
-                      type="button"
-                      className="ml-1.5 inline-flex items-center justify-center h-4 w-4 rounded-full text-blue-400 hover:bg-blue-200 hover:text-blue-500 focus:outline-none focus:bg-blue-500 focus:text-white"
-                      onClick={() => setFilters(prev => ({ ...prev, jobType: 'all' }))}
-                    >
-                      <span className="sr-only">Remove filter</span>
-                      <X className="h-3 w-3" />
-                    </button>
-                  </span>
-                )}
-                
-                {filters.experience !== 'all' && (
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                    {filters.experience} level
-                    <button 
-                      type="button"
-                      className="ml-1.5 inline-flex items-center justify-center h-4 w-4 rounded-full text-blue-400 hover:bg-blue-200 hover:text-blue-500 focus:outline-none focus:bg-blue-500 focus:text-white"
-                      onClick={() => setFilters(prev => ({ ...prev, experience: 'all' }))}
-                    >
-                      <span className="sr-only">Remove filter</span>
-                      <X className="h-3 w-3" />
-                    </button>
-                  </span>
-                )}
-                
-                {filters.remote && (
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                    Remote Only
-                    <button 
-                      type="button"
-                      className="ml-1.5 inline-flex items-center justify-center h-4 w-4 rounded-full text-blue-400 hover:bg-blue-200 hover:text-blue-500 focus:outline-none focus:bg-blue-500 focus:text-white"
-                      onClick={() => setFilters(prev => ({ ...prev, remote: false }))}
-                    >
-                      <span className="sr-only">Remove filter</span>
-                      <X className="h-3 w-3" />
-                    </button>
-                  </span>
-                )}
+                {/* Other filter tags would go here (location, job type, etc.) */}
                 
                 <button
                   type="button"

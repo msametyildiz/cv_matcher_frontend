@@ -1,20 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { 
-  Briefcase, 
-  MapPin, 
-  Calendar, 
-  DollarSign, 
-  Clock, 
-  Building, 
-  Globe, 
-  Share2, 
-  ChevronLeft, 
-  Check, 
-  FileText,
-  Bookmark,
-  Flag,
-  ArrowLeft
+  Briefcase, MapPin, Calendar, DollarSign, Clock, Building, 
+  Globe, Share2, ChevronLeft, FileText, Bookmark, Flag, ArrowLeft
 } from 'lucide-react';
 import { useApi } from '../../hooks/useApi';
 import { useAuth } from '../../hooks/useAuth';
@@ -38,7 +26,7 @@ const JobDetail = () => {
   const [similarJobs, setSimilarJobs] = useState([]);
   const [userCVs, setUserCVs] = useState([]);
   
-  // Fetch job details
+  // Mock API hooks
   const { 
     data: job, 
     loading, 
@@ -46,39 +34,6 @@ const JobDetail = () => {
     execute: fetchJob 
   } = useApi({
     url: `/api/jobs/${jobId}`,
-    method: 'GET',
-    autoFetch: true
-  });
-
-  // Fetch user's CVs
-  const {
-    data: cvsData,
-    loading: loadingCVs,
-    error: cvsError,
-    execute: fetchCVs
-  } = useApi({
-    url: '/api/cvs',
-    method: 'GET',
-    autoFetch: true
-  });
-
-  // Fetch similar jobs
-  const {
-    data: similarJobsData,
-    loading: loadingSimilarJobs,
-    execute: fetchSimilarJobs
-  } = useApi({
-    url: `/api/jobs/${jobId}/similar`,
-    method: 'GET',
-    autoFetch: true
-  });
-
-  // Check if job is bookmarked
-  const {
-    data: bookmarkData,
-    execute: checkBookmarkStatus
-  } = useApi({
-    url: `/api/jobs/${jobId}/bookmark`,
     method: 'GET',
     autoFetch: true
   });
@@ -94,31 +49,21 @@ const JobDetail = () => {
         location: 'San Francisco, CA',
         remote: true,
         description: `<p>Join our dynamic team as a Senior Full Stack Developer where you'll work on cutting-edge projects that impact millions of users worldwide. We're looking for a passionate developer who can lead by example and help us push the boundaries of what's possible.</p>
-          <p>As a senior member of our engineering team, you'll be responsible for designing, developing, and maintaining both frontend and backend systems. You'll collaborate closely with product managers, designers, and other developers to create seamless user experiences.</p>`,
+          <p>As a senior member of our engineering team, you'll be responsible for designing, developing, and maintaining both frontend and backend systems.</p>`,
         responsibilities: [
           'Design, develop, and maintain scalable applications using React and Node.js',
           'Lead technical architecture discussions and make critical technology decisions',
-          'Mentor junior developers and perform code reviews',
-          'Work with product and design teams to define feature specifications',
-          'Optimize application performance and ensure code quality',
-          'Troubleshoot and fix bugs in existing applications'
+          'Mentor junior developers and perform code reviews'
         ],
         requirements: [
           '5+ years of experience in full stack development',
           'Expert knowledge of JavaScript/TypeScript, React, and Node.js',
-          'Experience with database design and ORM frameworks',
-          'Familiarity with cloud services (AWS, GCP, or Azure)',
-          'Understanding of CI/CD pipelines and DevOps practices',
-          'Excellent problem-solving skills and attention to detail'
+          'Experience with database design and ORM frameworks'
         ],
         benefits: [
           'Competitive salary and equity package',
           'Comprehensive health, dental, and vision insurance',
-          'Flexible remote work policy',
-          '401(k) matching',
-          'Unlimited PTO',
-          'Professional development budget',
-          'Weekly team lunches and quarterly offsites'
+          'Flexible remote work policy'
         ],
         salaryRange: '$120,000 - $160,000',
         employmentType: 'Full-time',
@@ -130,7 +75,6 @@ const JobDetail = () => {
         skills: ['JavaScript', 'TypeScript', 'React', 'Node.js', 'MongoDB', 'AWS', 'Docker', 'GraphQL'],
         applicantsCount: 42,
         viewsCount: 256,
-        companyLogo: null,
         companyWebsite: 'https://tech-innovations.example.com',
         companySize: '50-200 employees',
         industry: 'Information Technology'
@@ -155,15 +99,6 @@ const JobDetail = () => {
           employmentType: 'Full-time',
           matchScore: 78,
           postedDate: '2023-05-03T09:15:00Z'
-        },
-        {
-          id: 103,
-          title: 'Backend Developer',
-          company: 'Server Systems Inc.',
-          location: 'San Francisco, CA',
-          employmentType: 'Full-time',
-          matchScore: 75,
-          postedDate: '2023-05-02T11:45:00Z'
         }
       ];
 
@@ -191,26 +126,8 @@ const JobDetail = () => {
         setUserCVs(mockCVs);
         setSelectedCV(mockCVs.find(cv => cv.isPrimary) || mockCVs[0]);
       }, 300);
-    } else if (job) {
-      document.title = `${job.title} at ${job.company} | CV Matcher`;
     }
-
-    // Check if job is bookmarked from the API response
-    if (bookmarkData) {
-      setIsBookmarked(bookmarkData.isBookmarked);
-    }
-
-    // Set user CVs from API response
-    if (cvsData) {
-      setUserCVs(cvsData.cvs || []);
-      setSelectedCV(cvsData.cvs?.find(cv => cv.isPrimary) || cvsData.cvs?.[0]);
-    }
-
-    // Set similar jobs from API response
-    if (similarJobsData) {
-      setSimilarJobs(similarJobsData.jobs || []);
-    }
-  }, [job, loading, error, jobId, bookmarkData, cvsData, similarJobsData]);
+  }, [job, loading, error, jobId]);
 
   // Format date for display
   const formatDate = (dateString) => {
@@ -255,12 +172,6 @@ const JobDetail = () => {
     setIsSubmitting(true);
     
     try {
-      // In a real app, this would call the API
-      // await api.post(`/api/jobs/${jobId}/apply`, {
-      //   cvId: selectedCV.id,
-      //   note: applicationNote
-      // });
-      
       // Simulate API call success
       setTimeout(() => {
         success('Application submitted successfully');
@@ -277,11 +188,6 @@ const JobDetail = () => {
   // Handle bookmark toggle
   const toggleBookmark = async () => {
     try {
-      // In a real app, this would call the API
-      // await api.post(`/api/jobs/${jobId}/bookmark`, {
-      //   bookmarked: !isBookmarked
-      // });
-      
       setIsBookmarked(!isBookmarked);
       success(isBookmarked ? 'Removed from saved jobs' : 'Added to saved jobs');
     } catch (err) {
@@ -309,7 +215,6 @@ const JobDetail = () => {
 
   // Handle report job
   const handleReport = () => {
-    // In a real app, this would open a modal to report the job
     success('Thank you for reporting this job. We will review it shortly.');
   };
 
@@ -533,17 +438,9 @@ const JobDetail = () => {
               <h2 className="text-lg font-medium text-gray-900 mb-4">About the Company</h2>
               
               <div className="flex items-center mb-4">
-                {job?.companyLogo ? (
-                  <img 
-                    src={job.companyLogo} 
-                    alt={`${job.company} logo`}
-                    className="h-12 w-12 mr-3" 
-                  />
-                ) : (
-                  <div className="flex-shrink-0 h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold mr-3">
-                    {job?.company.charAt(0)}
-                  </div>
-                )}
+                <div className="flex-shrink-0 h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold mr-3">
+                  {job?.company.charAt(0)}
+                </div>
                 <div>
                   <h3 className="text-md font-medium text-gray-900">{job?.company}</h3>
                   {job?.companySize && <p className="text-sm text-gray-500">{job.companySize}</p>}
@@ -578,67 +475,44 @@ const JobDetail = () => {
               <h2 className="text-lg font-medium text-gray-900 mb-4">Job Details</h2>
               
               <ul className="space-y-3 text-sm">
-                <li className="flex items-start">
-                  <Briefcase className="h-5 w-5 text-gray-400 mr-2" />
-                  <div>
-                    <span className="block text-gray-500">Job Type</span>
-                    <span className="block text-gray-900 font-medium">{job?.employmentType}</span>
-                  </div>
-                </li>
-                
-                <li className="flex items-start">
-                  <DollarSign className="h-5 w-5 text-gray-400 mr-2" />
-                  <div>
-                    <span className="block text-gray-500">Salary Range</span>
-                    <span className="block text-gray-900 font-medium">{job?.salaryRange || 'Not specified'}</span>
-                  </div>
-                </li>
-                
-                <li className="flex items-start">
-                  <MapPin className="h-5 w-5 text-gray-400 mr-2" />
-                  <div>
-                    <span className="block text-gray-500">Location</span>
-                    <span className="block text-gray-900 font-medium">
+                {[
+                  { icon: <Briefcase className="h-5 w-5 text-gray-400 mr-2" />, 
+                    label: 'Job Type', 
+                    value: job?.employmentType },
+                  { icon: <DollarSign className="h-5 w-5 text-gray-400 mr-2" />, 
+                    label: 'Salary Range', 
+                    value: job?.salaryRange || 'Not specified' },
+                  { icon: <MapPin className="h-5 w-5 text-gray-400 mr-2" />, 
+                    label: 'Location', 
+                    value: <>
                       {job?.location}
                       {job?.remote && <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded">Remote</span>}
-                    </span>
-                  </div>
-                </li>
-                
-                <li className="flex items-start">
-                  <Calendar className="h-5 w-5 text-gray-400 mr-2" />
-                  <div>
-                    <span className="block text-gray-500">Posted On</span>
-                    <span className="block text-gray-900 font-medium">
-                      {formatDate(job?.postedDate)} ({getDaysAgo(job?.postedDate)})
-                    </span>
-                  </div>
-                </li>
-                
-                {job?.applicationDeadline && (
-                  <li className="flex items-start">
-                    <Clock className="h-5 w-5 text-gray-400 mr-2" />
-                    <div>
-                      <span className="block text-gray-500">Application Deadline</span>
-                      <span className="block text-gray-900 font-medium">
-                        {formatDate(job?.applicationDeadline)}
+                    </> },
+                  { icon: <Calendar className="h-5 w-5 text-gray-400 mr-2" />, 
+                    label: 'Posted On', 
+                    value: job?.postedDate ? `${formatDate(job.postedDate)} (${getDaysAgo(job.postedDate)})` : '' },
+                  job?.applicationDeadline ? 
+                    { icon: <Clock className="h-5 w-5 text-gray-400 mr-2" />, 
+                      label: 'Application Deadline', 
+                      value: <>
+                        {formatDate(job.applicationDeadline)}
                         <span className="ml-2 text-xs text-blue-600">
-                          ({getDaysUntilDeadline(job?.applicationDeadline)} remaining)
+                          ({getDaysUntilDeadline(job.applicationDeadline)} remaining)
                         </span>
-                      </span>
-                    </div>
-                  </li>
-                )}
-                
-                {job?.experienceLevel && (
-                  <li className="flex items-start">
-                    <User className="h-5 w-5 text-gray-400 mr-2" />
+                      </> } : null,
+                  job?.experienceLevel ? 
+                    { icon: <User className="h-5 w-5 text-gray-400 mr-2" />, 
+                      label: 'Experience Level', 
+                      value: job.experienceLevel } : null
+                ].filter(Boolean).map((item, index) => (
+                  <li key={index} className="flex items-start">
+                    {item.icon}
                     <div>
-                      <span className="block text-gray-500">Experience Level</span>
-                      <span className="block text-gray-900 font-medium">{job.experienceLevel}</span>
+                      <span className="block text-gray-500">{item.label}</span>
+                      <span className="block text-gray-900 font-medium">{item.value}</span>
                     </div>
                   </li>
-                )}
+                ))}
               </ul>
               
               <div className="mt-6 pt-6 border-t border-gray-200">
@@ -691,11 +565,7 @@ const JobDetail = () => {
               Select CV
             </label>
             
-            {loadingCVs ? (
-              <Loader />
-            ) : cvsError ? (
-              <ErrorMessage message="Failed to load your CVs" onRetry={fetchCVs} />
-            ) : userCVs.length === 0 ? (
+            {userCVs.length === 0 ? (
               <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4">
                 <div className="flex">
                   <div className="flex-shrink-0">
@@ -738,16 +608,6 @@ const JobDetail = () => {
                           )}
                         </div>
                       </div>
-                    </div>
-                    
-                    <div className={`h-5 w-5 border rounded-full flex items-center justify-center ${
-                      selectedCV?.id === cv.id
-                        ? 'bg-blue-500 border-blue-500'
-                        : 'border-gray-300'
-                    }`}>
-                      {selectedCV?.id === cv.id && (
-                        <Check className="h-3 w-3 text-white" />
-                      )}
                     </div>
                   </div>
                 ))}

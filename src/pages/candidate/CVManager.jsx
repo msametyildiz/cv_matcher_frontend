@@ -1,17 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import { 
-  FileText, 
-  Upload, 
-  Download, 
-  Trash2, 
-  Check, 
-  Plus, 
-  Eye, 
-  AlertCircle,
-  Calendar,
-  Star,
-  Pencil
+  FileText, Upload, Download, Trash2, Check, Eye, 
+  AlertCircle, Calendar, Star, Pencil
 } from 'lucide-react';
 import api from '../../api';
 import Loader from '../../components/common/Loader';
@@ -38,10 +29,6 @@ const CVManager = () => {
     setError(null);
     
     try {
-      // In a real application, we would fetch from API
-      // const response = await api.cv.getCurrentUserCVs();
-      // setCvs(response.data);
-      
       // Mock data for development
       setTimeout(() => {
         setCvs([
@@ -85,31 +72,10 @@ const CVManager = () => {
                 { role: 'Junior Web Developer', company: 'StartUp Inc.', period: 'Jul 2020 - Feb 2021' }
               ]
             }
-          },
-          { 
-            id: 3, 
-            filename: 'Technical_Resume_Backend.pdf', 
-            uploadDate: '2023-02-05', 
-            lastModified: '2023-02-05',
-            isPrimary: false,
-            fileSize: '412 KB',
-            fileType: 'application/pdf',
-            previewAvailable: true,
-            parsedData: {
-              skills: ['Python', 'Django', 'Flask', 'PostgreSQL', 'Redis', 'Docker', 'AWS'],
-              education: [
-                { degree: 'Master of Science in Software Engineering', institution: 'Tech Institute', year: '2021' },
-                { degree: 'Bachelor of Science in Computer Science', institution: 'State University', year: '2019' }
-              ],
-              experience: [
-                { role: 'Backend Engineer', company: 'Data Systems Inc.', period: 'Sep 2021 - Present' },
-                { role: 'Software Developer', company: 'Enterprise Solutions', period: 'Jun 2019 - Aug 2021' }
-              ]
-            }
           }
         ]);
         setIsLoading(false);
-      }, 800); // Simulate network delay
+      }, 800);
     } catch (error) {
       console.error('Error fetching CVs:', error);
       setError('Failed to load your CVs. Please try again.');
@@ -118,8 +84,6 @@ const CVManager = () => {
   };
   
   const handleUploadSuccess = (newCV) => {
-    // In a real implementation, we would refresh the list or add the new CV
-    // to the existing list
     setCvs(prevCvs => [newCV, ...prevCvs]);
     setShowUploadForm(false);
     toast.success('CV uploaded successfully');
@@ -134,14 +98,8 @@ const CVManager = () => {
     if (!cvToDelete) return;
     
     try {
-      // In a real implementation, we would call the API
-      // await api.cv.deleteCV(cvToDelete.id);
-      
-      // Update the local state
       setCvs(prevCvs => prevCvs.filter(cv => cv.id !== cvToDelete.id));
       toast.success('CV deleted successfully');
-      
-      // Close the modal
       setShowDeleteModal(false);
       setCvToDelete(null);
     } catch (error) {
@@ -152,10 +110,6 @@ const CVManager = () => {
   
   const handleSetPrimary = async (cvId) => {
     try {
-      // In a real implementation, we would call the API
-      // await api.cv.setPrimaryCV(cvId);
-      
-      // Update the local state
       setCvs(prevCvs => prevCvs.map(cv => ({
         ...cv,
         isPrimary: cv.id === cvId
@@ -170,16 +124,6 @@ const CVManager = () => {
   
   const handleDownload = async (cv) => {
     try {
-      // In a real implementation, we would call the API
-      // const response = await api.cv.downloadCV(cv.id);
-      // const url = window.URL.createObjectURL(new Blob([response.data]));
-      // const link = document.createElement('a');
-      // link.href = url;
-      // link.setAttribute('download', cv.filename);
-      // document.body.appendChild(link);
-      // link.click();
-      // link.remove();
-      
       toast.success(`Downloading ${cv.filename}`);
     } catch (error) {
       console.error('Error downloading CV:', error);
@@ -206,6 +150,9 @@ const CVManager = () => {
       return <FileText className="h-5 w-5 text-gray-500" />;
     }
   };
+  
+  if (isLoading) return <Loader />;
+  if (error) return <ErrorMessage message={error} onRetry={fetchCVs} />;
   
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -236,15 +183,7 @@ const CVManager = () => {
         </div>
       )}
       
-      {isLoading ? (
-        <div className="bg-white rounded-lg shadow p-6">
-          <Loader />
-        </div>
-      ) : error ? (
-        <div className="bg-white rounded-lg shadow p-6">
-          <ErrorMessage message={error} onRetry={fetchCVs} />
-        </div>
-      ) : cvs.length === 0 ? (
+      {cvs.length === 0 ? (
         <div className="bg-white rounded-lg shadow p-12 text-center">
           <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100">
             <FileText className="h-6 w-6 text-blue-600" aria-hidden="true" />
@@ -299,22 +238,22 @@ const CVManager = () => {
                           <Download className="h-4 w-4" />
                         </button>
                         {!cv.isPrimary && (
-                          <button
-                            type="button"
-                            onClick={() => handleSetPrimary(cv.id)}
-                            className="inline-flex items-center p-1.5 border border-blue-300 shadow-sm text-xs rounded text-blue-700 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                          >
-                            <Check className="h-4 w-4" />
-                          </button>
-                        )}
-                        {!cv.isPrimary && (
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteClick(cv)}
-                            className="inline-flex items-center p-1.5 border border-red-300 shadow-sm text-xs rounded text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
+                          <>
+                            <button
+                              type="button"
+                              onClick={() => handleSetPrimary(cv.id)}
+                              className="inline-flex items-center p-1.5 border border-blue-300 shadow-sm text-xs rounded text-blue-700 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                            >
+                              <Check className="h-4 w-4" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteClick(cv)}
+                              className="inline-flex items-center p-1.5 border border-red-300 shadow-sm text-xs rounded text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </>
                         )}
                       </div>
                     </div>
@@ -350,9 +289,6 @@ const CVManager = () => {
                   <li>Tailor your CV for each job application to match the requirements.</li>
                   <li>Use bullet points to make your CV easy to scan.</li>
                   <li>Include measurable achievements rather than just listing responsibilities.</li>
-                  <li>Make sure your contact information is up-to-date.</li>
-                  <li>Proofread carefully to avoid spelling and grammar errors.</li>
-                  <li>Use professional fonts and maintain consistent formatting.</li>
                 </ul>
               </div>
             </div>

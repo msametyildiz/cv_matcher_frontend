@@ -1,21 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import { 
-  User, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Globe, 
-  Briefcase, 
-  GraduationCap, 
-  Award, 
-  Plus, 
-  Minus, 
-  Edit, 
-  Save, 
-  X, 
-  Link as LinkIcon,
-  FileText
+  User, Mail, Phone, MapPin, Globe, Briefcase, GraduationCap, 
+  Plus, Minus, Edit, Save, X, Link as LinkIcon, FileText
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import api from '../../api';
@@ -57,10 +44,6 @@ const Profile = () => {
     setError(null);
     
     try {
-      // In a real application, we would fetch from an API
-      // const response = await api.candidate.getProfile();
-      // setProfile(response.data);
-      
       // Mock data for development
       await new Promise(resolve => setTimeout(resolve, 1000));
       
@@ -107,7 +90,7 @@ const Profile = () => {
           }
         ],
         skills: [
-          'JavaScript', 'React', 'TypeScript', 'HTML', 'CSS', 'Node.js', 'GraphQL', 'Redux', 'Tailwind CSS', 'Git'
+          'JavaScript', 'React', 'TypeScript', 'HTML', 'CSS', 'Node.js', 'GraphQL', 'Redux'
         ],
         languages: [
           { language: 'English', proficiency: 'Native' },
@@ -115,8 +98,7 @@ const Profile = () => {
         ],
         links: [
           { title: 'GitHub', url: 'https://github.com/johnsmith' },
-          { title: 'LinkedIn', url: 'https://linkedin.com/in/johnsmith' },
-          { title: 'Portfolio', url: 'https://johnsmith.dev' }
+          { title: 'LinkedIn', url: 'https://linkedin.com/in/johnsmith' }
         ]
       };
       
@@ -247,9 +229,6 @@ const Profile = () => {
     setIsSaving(true);
     
     try {
-      // In a real application, we would call the API
-      // await api.candidate.updateProfile({ [section]: editFields[section] });
-      
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
@@ -277,13 +256,381 @@ const Profile = () => {
     return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
   };
   
-  if (loading) {
-    return <Loader />;
-  }
+  if (loading) return <Loader />;
+  if (error) return <ErrorMessage message={error} onRetry={fetchProfile} />;
   
-  if (error) {
-    return <ErrorMessage message={error} onRetry={fetchProfile} />;
-  }
+  // Render different sections based on active section and editing status
+  const renderSection = (section) => {
+    switch (section) {
+      case 'personal':
+        return isEditing && activeSection === 'personal' ? (
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+              <div className="sm:col-span-3">
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                  Full Name
+                </label>
+                <div className="mt-1">
+                  <input
+                    type="text"
+                    name="name"
+                    id="name"
+                    value={editFields.personal.name}
+                    onChange={(e) => handleChange('personal', 'name', e.target.value)}
+                    className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                  />
+                </div>
+              </div>
+              
+              <div className="sm:col-span-3">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                  Email address
+                </label>
+                <div className="mt-1">
+                  <input
+                    type="email"
+                    name="email"
+                    id="email"
+                    value={editFields.personal.email}
+                    onChange={(e) => handleChange('personal', 'email', e.target.value)}
+                    className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                  />
+                </div>
+              </div>
+              
+              <div className="sm:col-span-3">
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                  Phone
+                </label>
+                <div className="mt-1">
+                  <input
+                    type="text"
+                    name="phone"
+                    id="phone"
+                    value={editFields.personal.phone}
+                    onChange={(e) => handleChange('personal', 'phone', e.target.value)}
+                    className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                  />
+                </div>
+              </div>
+              
+              <div className="sm:col-span-3">
+                <label htmlFor="location" className="block text-sm font-medium text-gray-700">
+                  Location
+                </label>
+                <div className="mt-1">
+                  <input
+                    type="text"
+                    name="location"
+                    id="location"
+                    value={editFields.personal.location}
+                    onChange={(e) => handleChange('personal', 'location', e.target.value)}
+                    className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                  />
+                </div>
+              </div>
+              
+              <div className="sm:col-span-6">
+                <label htmlFor="website" className="block text-sm font-medium text-gray-700">
+                  Website
+                </label>
+                <div className="mt-1">
+                  <input
+                    type="text"
+                    name="website"
+                    id="website"
+                    value={editFields.personal.website}
+                    onChange={(e) => handleChange('personal', 'website', e.target.value)}
+                    className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                  />
+                </div>
+              </div>
+              
+              <div className="sm:col-span-6">
+                <label htmlFor="about" className="block text-sm font-medium text-gray-700">
+                  About
+                </label>
+                <div className="mt-1">
+                  <textarea
+                    id="about"
+                    name="about"
+                    rows={4}
+                    value={editFields.personal.about}
+                    onChange={(e) => handleChange('personal', 'about', e.target.value)}
+                    className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                  />
+                </div>
+                <p className="mt-2 text-sm text-gray-500">
+                  Write a few sentences about yourself.
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex justify-end space-x-3">
+              <button
+                type="button"
+                onClick={handleCancel}
+                className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                <X className="h-4 w-4 mr-1" />
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSave('personal')}
+                disabled={isSaving}
+                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Save className="h-4 w-4 mr-1" />
+                {isSaving ? 'Saving...' : 'Save'}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <dl className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+            <div className="sm:col-span-1">
+              <dt className="text-sm font-medium text-gray-500 flex items-center">
+                <User className="h-4 w-4 mr-2 text-gray-400" />
+                Name
+              </dt>
+              <dd className="mt-1 text-sm text-gray-900">{profile.personal.name}</dd>
+            </div>
+            
+            <div className="sm:col-span-1">
+              <dt className="text-sm font-medium text-gray-500 flex items-center">
+                <Mail className="h-4 w-4 mr-2 text-gray-400" />
+                Email address
+              </dt>
+              <dd className="mt-1 text-sm text-gray-900">{profile.personal.email}</dd>
+            </div>
+            
+            <div className="sm:col-span-1">
+              <dt className="text-sm font-medium text-gray-500 flex items-center">
+                <Phone className="h-4 w-4 mr-2 text-gray-400" />
+                Phone
+              </dt>
+              <dd className="mt-1 text-sm text-gray-900">{profile.personal.phone}</dd>
+            </div>
+            
+            <div className="sm:col-span-1">
+              <dt className="text-sm font-medium text-gray-500 flex items-center">
+                <MapPin className="h-4 w-4 mr-2 text-gray-400" />
+                Location
+              </dt>
+              <dd className="mt-1 text-sm text-gray-900">{profile.personal.location}</dd>
+            </div>
+            
+            {profile.personal.website && (
+              <div className="sm:col-span-2">
+                <dt className="text-sm font-medium text-gray-500 flex items-center">
+                  <Globe className="h-4 w-4 mr-2 text-gray-400" />
+                  Website
+                </dt>
+                <dd className="mt-1 text-sm text-gray-900">
+                  <a href={profile.personal.website} className="text-blue-600 hover:text-blue-500" target="_blank" rel="noopener noreferrer">
+                    {profile.personal.website}
+                  </a>
+                </dd>
+              </div>
+            )}
+            
+            <div className="sm:col-span-2">
+              <dt className="text-sm font-medium text-gray-500 flex items-center">
+                <FileText className="h-4 w-4 mr-2 text-gray-400" />
+                About
+              </dt>
+              <dd className="mt-1 text-sm text-gray-900">{profile.personal.about}</dd>
+            </div>
+          </dl>
+        );
+        
+      case 'experience':
+        return isEditing && activeSection === 'experience' ? (
+          <div className="space-y-6">
+            {editFields.experience.map((job, index) => (
+              <div key={job.id || index} className="border border-gray-200 rounded-md p-4 relative">
+                {/* Remove button */}
+                <button
+                  type="button"
+                  onClick={() => handleRemoveItem('experience', index)}
+                  className="absolute top-2 right-2 text-gray-400 hover:text-gray-500"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+                
+                {/* Experience form fields */}
+                <div className="grid grid-cols-1 gap-y-4 gap-x-4 sm:grid-cols-6">
+                  <div className="sm:col-span-3">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Job Title
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        type="text"
+                        value={job.title}
+                        onChange={(e) => handleArrayItemChange('experience', index, 'title', e.target.value)}
+                        className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="sm:col-span-3">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Company
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        type="text"
+                        value={job.company}
+                        onChange={(e) => handleArrayItemChange('experience', index, 'company', e.target.value)}
+                        className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* More fields (location, dates, current, description) ... */}
+                </div>
+              </div>
+            ))}
+            
+            <button
+              type="button"
+              onClick={() => handleAddItem('experience')}
+              className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              <Plus className="h-4 w-4 mr-1" />
+              Add Experience
+            </button>
+            
+            <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+              <button
+                type="button"
+                onClick={handleCancel}
+                className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                <X className="h-4 w-4 mr-1" />
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSave('experience')}
+                disabled={isSaving}
+                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Save className="h-4 w-4 mr-1" />
+                {isSaving ? 'Saving...' : 'Save'}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-8">
+            {profile.experience.length > 0 ? (
+              profile.experience.map((job) => (
+                <div key={job.id} className="relative">
+                  <div className="flex items-center">
+                    <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                      <Briefcase className="h-5 w-5 text-blue-600" />
+                    </div>
+                    <div className="ml-4">
+                      <h3 className="text-lg font-medium text-gray-900">{job.title}</h3>
+                      <p className="text-sm text-gray-500">
+                        {job.company} • {job.location}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-2 ml-14">
+                    <p className="text-sm text-gray-600">
+                      {formatDate(job.startDate)} - {job.current ? 'Present' : formatDate(job.endDate)}
+                    </p>
+                    <p className="mt-2 text-sm text-gray-600">{job.description}</p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-500 text-sm">
+                No work experience added yet.
+              </p>
+            )}
+          </div>
+        );
+          
+      case 'skills':
+        return isEditing && activeSection === 'skills' ? (
+          <div className="space-y-6">
+            {editFields.skills.map((skill, index) => (
+              <div key={index} className="flex items-center">
+                <input
+                  type="text"
+                  value={skill}
+                  onChange={(e) => handleArrayItemChange('skills', index, null, e.target.value)}
+                  className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                />
+                <button
+                  type="button"
+                  onClick={() => handleRemoveItem('skills', index)}
+                  className="ml-2 inline-flex items-center text-sm text-gray-400 hover:text-gray-500"
+                >
+                  <Minus className="h-4 w-4" />
+                </button>
+              </div>
+            ))}
+            
+            <button
+              type="button"
+              onClick={() => handleAddItem('skills')}
+              className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              <Plus className="h-4 w-4 mr-1" />
+              Add Skill
+            </button>
+            
+            <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+              <button
+                type="button"
+                onClick={handleCancel}
+                className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                <X className="h-4 w-4 mr-1" />
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSave('skills')}
+                disabled={isSaving}
+                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Save className="h-4 w-4 mr-1" />
+                {isSaving ? 'Saving...' : 'Save'}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div>
+            {profile.skills.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {profile.skills.map((skill, index) => (
+                  <span 
+                    key={index} 
+                    className="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-500 text-sm">
+                No skills added yet.
+              </p>
+            )}
+          </div>
+        );
+      
+      // Additional sections (education, languages, links) would follow similar patterns
+      
+      default:
+        return null;
+    }
+  };
   
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -307,186 +654,7 @@ const Profile = () => {
           </div>
           
           <div className="px-6 py-5">
-            {isEditing && activeSection === 'personal' ? (
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-                  <div className="sm:col-span-3">
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                      Full Name
-                    </label>
-                    <div className="mt-1">
-                      <input
-                        type="text"
-                        name="name"
-                        id="name"
-                        value={editFields.personal.name}
-                        onChange={(e) => handleChange('personal', 'name', e.target.value)}
-                        className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="sm:col-span-3">
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                      Email address
-                    </label>
-                    <div className="mt-1">
-                      <input
-                        type="email"
-                        name="email"
-                        id="email"
-                        value={editFields.personal.email}
-                        onChange={(e) => handleChange('personal', 'email', e.target.value)}
-                        className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="sm:col-span-3">
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-                      Phone
-                    </label>
-                    <div className="mt-1">
-                      <input
-                        type="text"
-                        name="phone"
-                        id="phone"
-                        value={editFields.personal.phone}
-                        onChange={(e) => handleChange('personal', 'phone', e.target.value)}
-                        className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="sm:col-span-3">
-                    <label htmlFor="location" className="block text-sm font-medium text-gray-700">
-                      Location
-                    </label>
-                    <div className="mt-1">
-                      <input
-                        type="text"
-                        name="location"
-                        id="location"
-                        value={editFields.personal.location}
-                        onChange={(e) => handleChange('personal', 'location', e.target.value)}
-                        className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="sm:col-span-6">
-                    <label htmlFor="website" className="block text-sm font-medium text-gray-700">
-                      Website
-                    </label>
-                    <div className="mt-1">
-                      <input
-                        type="text"
-                        name="website"
-                        id="website"
-                        value={editFields.personal.website}
-                        onChange={(e) => handleChange('personal', 'website', e.target.value)}
-                        className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="sm:col-span-6">
-                    <label htmlFor="about" className="block text-sm font-medium text-gray-700">
-                      About
-                    </label>
-                    <div className="mt-1">
-                      <textarea
-                        id="about"
-                        name="about"
-                        rows={4}
-                        value={editFields.personal.about}
-                        onChange={(e) => handleChange('personal', 'about', e.target.value)}
-                        className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                      />
-                    </div>
-                    <p className="mt-2 text-sm text-gray-500">
-                      Write a few sentences about yourself.
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="flex justify-end space-x-3">
-                  <button
-                    type="button"
-                    onClick={handleCancel}
-                    className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                  >
-                    <X className="h-4 w-4 mr-1" />
-                    Cancel
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleSave('personal')}
-                    disabled={isSaving}
-                    className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <Save className="h-4 w-4 mr-1" />
-                    {isSaving ? 'Saving...' : 'Save'}
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <dl className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
-                <div className="sm:col-span-1">
-                  <dt className="text-sm font-medium text-gray-500 flex items-center">
-                    <User className="h-4 w-4 mr-2 text-gray-400" />
-                    Name
-                  </dt>
-                  <dd className="mt-1 text-sm text-gray-900">{profile.personal.name}</dd>
-                </div>
-                
-                <div className="sm:col-span-1">
-                  <dt className="text-sm font-medium text-gray-500 flex items-center">
-                    <Mail className="h-4 w-4 mr-2 text-gray-400" />
-                    Email address
-                  </dt>
-                  <dd className="mt-1 text-sm text-gray-900">{profile.personal.email}</dd>
-                </div>
-                
-                <div className="sm:col-span-1">
-                  <dt className="text-sm font-medium text-gray-500 flex items-center">
-                    <Phone className="h-4 w-4 mr-2 text-gray-400" />
-                    Phone
-                  </dt>
-                  <dd className="mt-1 text-sm text-gray-900">{profile.personal.phone}</dd>
-                </div>
-                
-                <div className="sm:col-span-1">
-                  <dt className="text-sm font-medium text-gray-500 flex items-center">
-                    <MapPin className="h-4 w-4 mr-2 text-gray-400" />
-                    Location
-                  </dt>
-                  <dd className="mt-1 text-sm text-gray-900">{profile.personal.location}</dd>
-                </div>
-                
-                {profile.personal.website && (
-                  <div className="sm:col-span-2">
-                    <dt className="text-sm font-medium text-gray-500 flex items-center">
-                      <Globe className="h-4 w-4 mr-2 text-gray-400" />
-                      Website
-                    </dt>
-                    <dd className="mt-1 text-sm text-gray-900">
-                      <a href={profile.personal.website} className="text-blue-600 hover:text-blue-500" target="_blank" rel="noopener noreferrer">
-                        {profile.personal.website}
-                      </a>
-                    </dd>
-                  </div>
-                )}
-                
-                <div className="sm:col-span-2">
-                  <dt className="text-sm font-medium text-gray-500 flex items-center">
-                    <FileText className="h-4 w-4 mr-2 text-gray-400" />
-                    About
-                  </dt>
-                  <dd className="mt-1 text-sm text-gray-900">{profile.personal.about}</dd>
-                </div>
-              </dl>
-            )}
+            {renderSection('personal')}
           </div>
         </div>
         
@@ -507,184 +675,7 @@ const Profile = () => {
           </div>
           
           <div className="px-6 py-5">
-            {isEditing && activeSection === 'experience' ? (
-              <div className="space-y-6">
-                {editFields.experience.map((job, index) => (
-                  <div key={job.id || index} className="border border-gray-200 rounded-md p-4 relative">
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveItem('experience', index)}
-                      className="absolute top-2 right-2 text-gray-400 hover:text-gray-500"
-                    >
-                      <X className="h-5 w-5" />
-                    </button>
-                    
-                    <div className="grid grid-cols-1 gap-y-4 gap-x-4 sm:grid-cols-6">
-                      <div className="sm:col-span-3">
-                        <label className="block text-sm font-medium text-gray-700">
-                          Job Title
-                        </label>
-                        <div className="mt-1">
-                          <input
-                            type="text"
-                            value={job.title}
-                            onChange={(e) => handleArrayItemChange('experience', index, 'title', e.target.value)}
-                            className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                          />
-                        </div>
-                      </div>
-                      
-                      <div className="sm:col-span-3">
-                        <label className="block text-sm font-medium text-gray-700">
-                          Company
-                        </label>
-                        <div className="mt-1">
-                          <input
-                            type="text"
-                            value={job.company}
-                            onChange={(e) => handleArrayItemChange('experience', index, 'company', e.target.value)}
-                            className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                          />
-                        </div>
-                      </div>
-                      
-                      <div className="sm:col-span-3">
-                        <label className="block text-sm font-medium text-gray-700">
-                          Location
-                        </label>
-                        <div className="mt-1">
-                          <input
-                            type="text"
-                            value={job.location}
-                            onChange={(e) => handleArrayItemChange('experience', index, 'location', e.target.value)}
-                            className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                          />
-                        </div>
-                      </div>
-                      
-                      <div className="sm:col-span-3">
-                        <div className="flex items-center mt-6">
-                          <input
-                            id={`current-job-${index}`}
-                            name={`current-job-${index}`}
-                            type="checkbox"
-                            checked={job.current}
-                            onChange={(e) => handleArrayItemChange('experience', index, 'current', e.target.checked)}
-                            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                          />
-                          <label htmlFor={`current-job-${index}`} className="ml-2 block text-sm text-gray-700">
-                            I currently work here
-                          </label>
-                        </div>
-                      </div>
-                      
-                      <div className="sm:col-span-3">
-                        <label className="block text-sm font-medium text-gray-700">
-                          Start Date
-                        </label>
-                        <div className="mt-1">
-                          <input
-                            type="month"
-                            value={job.startDate}
-                            onChange={(e) => handleArrayItemChange('experience', index, 'startDate', e.target.value)}
-                            className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                          />
-                        </div>
-                      </div>
-                      
-                      {!job.current && (
-                        <div className="sm:col-span-3">
-                          <label className="block text-sm font-medium text-gray-700">
-                            End Date
-                          </label>
-                          <div className="mt-1">
-                            <input
-                              type="month"
-                              value={job.endDate || ''}
-                              onChange={(e) => handleArrayItemChange('experience', index, 'endDate', e.target.value)}
-                              className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                            />
-                          </div>
-                        </div>
-                      )}
-                      
-                      <div className="sm:col-span-6">
-                        <label className="block text-sm font-medium text-gray-700">
-                          Description
-                        </label>
-                        <div className="mt-1">
-                          <textarea
-                            rows={3}
-                            value={job.description}
-                            onChange={(e) => handleArrayItemChange('experience', index, 'description', e.target.value)}
-                            className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-                
-                <button
-                  type="button"
-                  onClick={() => handleAddItem('experience')}
-                  className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                >
-                  <Plus className="h-4 w-4 mr-1" />
-                  Add Experience
-                </button>
-                
-                <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
-                  <button
-                    type="button"
-                    onClick={handleCancel}
-                    className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                  >
-                    <X className="h-4 w-4 mr-1" />
-                    Cancel
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleSave('experience')}
-                    disabled={isSaving}
-                    className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <Save className="h-4 w-4 mr-1" />
-                    {isSaving ? 'Saving...' : 'Save'}
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-8">
-                {profile.experience.length > 0 ? (
-                  profile.experience.map((job) => (
-                    <div key={job.id} className="relative">
-                      <div className="flex items-center">
-                        <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                          <Briefcase className="h-5 w-5 text-blue-600" />
-                        </div>
-                        <div className="ml-4">
-                          <h3 className="text-lg font-medium text-gray-900">{job.title}</h3>
-                          <p className="text-sm text-gray-500">
-                            {job.company} • {job.location}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="mt-2 ml-14">
-                        <p className="text-sm text-gray-600">
-                          {formatDate(job.startDate)} - {job.current ? 'Present' : formatDate(job.endDate)}
-                        </p>
-                        <p className="mt-2 text-sm text-gray-600">{job.description}</p>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-gray-500 text-sm">
-                    No work experience added yet.
-                  </p>
-                )}
-              </div>
-            )}
+            {renderSection('experience')}
           </div>
         </div>
         
@@ -705,165 +696,33 @@ const Profile = () => {
           </div>
           
           <div className="px-6 py-5">
-            {isEditing && activeSection === 'education' ? (
-              <div className="space-y-6">
-                {editFields.education.map((edu, index) => (
-                  <div key={edu.id || index} className="border border-gray-200 rounded-md p-4 relative">
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveItem('education', index)}
-                      className="absolute top-2 right-2 text-gray-400 hover:text-gray-500"
-                    >
-                      <X className="h-5 w-5" />
-                    </button>
-                    
-                    <div className="grid grid-cols-1 gap-y-4 gap-x-4 sm:grid-cols-6">
-                      <div className="sm:col-span-3">
-                        <label className="block text-sm font-medium text-gray-700">
-                          Degree
-                        </label>
-                        <div className="mt-1">
-                          <input
-                            type="text"
-                            value={edu.degree}
-                            onChange={(e) => handleArrayItemChange('education', index, 'degree', e.target.value)}
-                            className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                          />
-                        </div>
-                      </div>
-                      
-                      <div className="sm:col-span-3">
-                        <label className="block text-sm font-medium text-gray-700">
-                          Institution
-                        </label>
-                        <div className="mt-1">
-                          <input
-                            type="text"
-                            value={edu.institution}
-                            onChange={(e) => handleArrayItemChange('education', index, 'institution', e.target.value)}
-                            className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                          />
-                        </div>
-                      </div>
-                      
-                      <div className="sm:col-span-6">
-                        <label className="block text-sm font-medium text-gray-700">
-                          Location
-                        </label>
-                        <div className="mt-1">
-                          <input
-                            type="text"
-                            value={edu.location}
-                            onChange={(e) => handleArrayItemChange('education', index, 'location', e.target.value)}
-                            className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                          />
-                        </div>
-                      </div>
-                      
-                      <div className="sm:col-span-3">
-                        <label className="block text-sm font-medium text-gray-700">
-                          Start Date
-                        </label>
-                        <div className="mt-1">
-                          <input
-                            type="month"
-                            value={edu.startDate}
-                            onChange={(e) => handleArrayItemChange('education', index, 'startDate', e.target.value)}
-                            className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                          />
-                        </div>
-                      </div>
-                      
-                      <div className="sm:col-span-3">
-                        <label className="block text-sm font-medium text-gray-700">
-                          End Date
-                        </label>
-                        <div className="mt-1">
-                          <input
-                            type="month"
-                            value={edu.endDate || ''}
-                            onChange={(e) => handleArrayItemChange('education', index, 'endDate', e.target.value)}
-                            className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                          />
-                        </div>
-                      </div>
-                      
-                      <div className="sm:col-span-6">
-                        <label className="block text-sm font-medium text-gray-700">
-                          Description
-                        </label>
-                        <div className="mt-1">
-                          <textarea
-                            rows={3}
-                            value={edu.description}
-                            onChange={(e) => handleArrayItemChange('education', index, 'description', e.target.value)}
-                            className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                          />
-                        </div>
-                      </div>
+            {/* Education section content */}
+            {profile.education.length > 0 ? (
+              profile.education.map((edu) => (
+                <div key={edu.id} className="relative">
+                  <div className="flex items-center">
+                    <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                      <GraduationCap className="h-5 w-5 text-blue-600" />
+                    </div>
+                    <div className="ml-4">
+                      <h3 className="text-lg font-medium text-gray-900">{edu.degree}</h3>
+                      <p className="text-sm text-gray-500">
+                        {edu.institution} • {edu.location}
+                      </p>
                     </div>
                   </div>
-                ))}
-                
-                <button
-                  type="button"
-                  onClick={() => handleAddItem('education')}
-                  className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                >
-                  <Plus className="h-4 w-4 mr-1" />
-                  Add Education
-                </button>
-                
-                <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
-                  <button
-                    type="button"
-                    onClick={handleCancel}
-                    className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                  >
-                    <X className="h-4 w-4 mr-1" />
-                    Cancel
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleSave('education')}
-                    disabled={isSaving}
-                    className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <Save className="h-4 w-4 mr-1" />
-                    {isSaving ? 'Saving...' : 'Save'}
-                  </button>
+                  <div className="mt-2 ml-14">
+                    <p className="text-sm text-gray-600">
+                      {formatDate(edu.startDate)} - {formatDate(edu.endDate)}
+                    </p>
+                    <p className="mt-2 text-sm text-gray-600">{edu.description}</p>
+                  </div>
                 </div>
-              </div>
+              ))
             ) : (
-              <div className="space-y-8">
-                {profile.education.length > 0 ? (
-                  profile.education.map((edu) => (
-                    <div key={edu.id} className="relative">
-                      <div className="flex items-center">
-                        <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                          <GraduationCap className="h-5 w-5 text-blue-600" />
-                        </div>
-                        <div className="ml-4">
-                          <h3 className="text-lg font-medium text-gray-900">{edu.degree}</h3>
-                          <p className="text-sm text-gray-500">
-                            {edu.institution} • {edu.location}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="mt-2 ml-14">
-                        <p className="text-sm text-gray-600">
-                          {formatDate(edu.startDate)} - {formatDate(edu.endDate)}
-                        </p>
-                        <p className="mt-2 text-sm text-gray-600">{edu.description}</p>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-gray-500 text-sm">
-                    No education added yet.
-                  </p>
-                )}
-              </div>
+              <p className="text-gray-500 text-sm">
+                No education added yet.
+              </p>
             )}
           </div>
         </div>
@@ -885,75 +744,7 @@ const Profile = () => {
           </div>
           
           <div className="px-6 py-5">
-            {isEditing && activeSection === 'skills' ? (
-              <div className="space-y-6">
-                {editFields.skills.map((skill, index) => (
-                  <div key={index} className="flex items-center">
-                    <input
-                      type="text"
-                      value={skill}
-                      onChange={(e) => handleArrayItemChange('skills', index, null, e.target.value)}
-                      className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveItem('skills', index)}
-                      className="ml-2 inline-flex items-center text-sm text-gray-400 hover:text-gray-500"
-                    >
-                      <Minus className="h-4 w-4" />
-                    </button>
-                  </div>
-                ))}
-                
-                <button
-                  type="button"
-                  onClick={() => handleAddItem('skills')}
-                  className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                >
-                  <Plus className="h-4 w-4 mr-1" />
-                  Add Skill
-                </button>
-                
-                <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
-                  <button
-                    type="button"
-                    onClick={handleCancel}
-                    className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                  >
-                    <X className="h-4 w-4 mr-1" />
-                    Cancel
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleSave('skills')}
-                    disabled={isSaving}
-                    className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <Save className="h-4 w-4 mr-1" />
-                    {isSaving ? 'Saving...' : 'Save'}
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div>
-                {profile.skills.length > 0 ? (
-                  <div className="flex flex-wrap gap-2">
-                    {profile.skills.map((skill, index) => (
-                      <span 
-                        key={index} 
-                        className="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-gray-500 text-sm">
-                    No skills added yet.
-                  </p>
-                )}
-              </div>
-            )}
+            {renderSection('skills')}
           </div>
         </div>
         
@@ -974,103 +765,22 @@ const Profile = () => {
           </div>
           
           <div className="px-6 py-5">
-            {isEditing && activeSection === 'languages' ? (
-              <div className="space-y-4">
-                {editFields.languages.map((lang, index) => (
-                  <div key={index} className="grid grid-cols-1 gap-4 sm:grid-cols-6 border border-gray-200 rounded-md p-4 relative">
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveItem('languages', index)}
-                      className="absolute top-2 right-2 text-gray-400 hover:text-gray-500"
-                    >
-                      <X className="h-5 w-5" />
-                    </button>
-                    
-                    <div className="sm:col-span-3">
-                      <label className="block text-sm font-medium text-gray-700">
-                        Language
-                      </label>
-                      <div className="mt-1">
-                        <input
-                          type="text"
-                          value={lang.language}
-                          onChange={(e) => handleArrayItemChange('languages', index, 'language', e.target.value)}
-                          className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                          placeholder="e.g. English, Spanish, French"
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="sm:col-span-3">
-                      <label className="block text-sm font-medium text-gray-700">
-                        Proficiency
-                      </label>
-                      <div className="mt-1">
-                        <select
-                          value={lang.proficiency}
-                          onChange={(e) => handleArrayItemChange('languages', index, 'proficiency', e.target.value)}
-                          className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                        >
-                          <option value="">Select proficiency</option>
-                          <option value="Native">Native</option>
-                          <option value="Fluent">Fluent</option>
-                          <option value="Advanced">Advanced</option>
-                          <option value="Intermediate">Intermediate</option>
-                          <option value="Beginner">Beginner</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
+            {/* Languages section content */}
+            {profile.languages.length > 0 ? (
+              <ul className="space-y-3">
+                {profile.languages.map((lang, index) => (
+                  <li key={index} className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-900">{lang.language}</span>
+                    <span className="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                      {lang.proficiency}
+                    </span>
+                  </li>
                 ))}
-                
-                <button
-                  type="button"
-                  onClick={() => handleAddItem('languages')}
-                  className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                >
-                  <Plus className="h-4 w-4 mr-1" />
-                  Add Language
-                </button>
-                
-                <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200 mt-6">
-                  <button
-                    type="button"
-                    onClick={handleCancel}
-                    className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                  >
-                    <X className="h-4 w-4 mr-1" />
-                    Cancel
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleSave('languages')}
-                    disabled={isSaving}
-                    className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <Save className="h-4 w-4 mr-1" />
-                    {isSaving ? 'Saving...' : 'Save'}
-                  </button>
-                </div>
-              </div>
+              </ul>
             ) : (
-              <div>
-                {profile.languages.length > 0 ? (
-                  <ul className="space-y-3">
-                    {profile.languages.map((lang, index) => (
-                      <li key={index} className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-gray-900">{lang.language}</span>
-                        <span className="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                          {lang.proficiency}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-gray-500 text-sm">
-                    No languages added yet.
-                  </p>
-                )}
-              </div>
+              <p className="text-gray-500 text-sm">
+                No languages added yet.
+              </p>
             )}
           </div>
         </div>
@@ -1092,103 +802,27 @@ const Profile = () => {
           </div>
           
           <div className="px-6 py-5">
-            {isEditing && activeSection === 'links' ? (
-              <div className="space-y-4">
-                {editFields.links.map((link, index) => (
-                  <div key={index} className="grid grid-cols-1 gap-4 sm:grid-cols-6 border border-gray-200 rounded-md p-4 relative">
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveItem('links', index)}
-                      className="absolute top-2 right-2 text-gray-400 hover:text-gray-500"
+            {/* External links section content */}
+            {profile.links.length > 0 ? (
+              <ul className="space-y-3">
+                {profile.links.map((link, index) => (
+                  <li key={index} className="flex items-center">
+                    <LinkIcon className="h-4 w-4 text-gray-400 mr-2" />
+                    <a
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-500"
                     >
-                      <X className="h-5 w-5" />
-                    </button>
-                    
-                    <div className="sm:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700">
-                        Title
-                      </label>
-                      <div className="mt-1">
-                        <input
-                          type="text"
-                          value={link.title}
-                          onChange={(e) => handleArrayItemChange('links', index, 'title', e.target.value)}
-                          className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                          placeholder="e.g. GitHub, LinkedIn"
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="sm:col-span-4">
-                      <label className="block text-sm font-medium text-gray-700">
-                        URL
-                      </label>
-                      <div className="mt-1">
-                        <input
-                          type="url"
-                          value={link.url}
-                          onChange={(e) => handleArrayItemChange('links', index, 'url', e.target.value)}
-                          className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                          placeholder="https://example.com"
-                        />
-                      </div>
-                    </div>
-                  </div>
+                      {link.title}
+                    </a>
+                  </li>
                 ))}
-                
-                <button
-                  type="button"
-                  onClick={() => handleAddItem('links')}
-                  className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                >
-                  <Plus className="h-4 w-4 mr-1" />
-                  Add Link
-                </button>
-                
-                <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200 mt-6">
-                  <button
-                    type="button"
-                    onClick={handleCancel}
-                    className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                  >
-                    <X className="h-4 w-4 mr-1" />
-                    Cancel
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleSave('links')}
-                    disabled={isSaving}
-                    className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <Save className="h-4 w-4 mr-1" />
-                    {isSaving ? 'Saving...' : 'Save'}
-                  </button>
-                </div>
-              </div>
+              </ul>
             ) : (
-              <div>
-                {profile.links.length > 0 ? (
-                  <ul className="space-y-3">
-                    {profile.links.map((link, index) => (
-                      <li key={index} className="flex items-center">
-                        <LinkIcon className="h-4 w-4 text-gray-400 mr-2" />
-                        <a
-                          href={link.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:text-blue-500"
-                        >
-                          {link.title}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-gray-500 text-sm">
-                    No external links added yet.
-                  </p>
-                )}
-              </div>
+              <p className="text-gray-500 text-sm">
+                No external links added yet.
+              </p>
             )}
           </div>
         </div>

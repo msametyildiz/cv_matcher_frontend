@@ -1,16 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  User, 
-  Mail, 
-  Bell, 
-  Lock, 
-  Shield, 
-  Trash2, 
-  Save, 
-  X, 
-  AlertTriangle,
-  Eye,
-  EyeOff
+  User, Mail, Bell, Lock, Shield, Trash2, 
+  Save, X, AlertTriangle, Eye, EyeOff
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useAuth } from '../../hooks/useAuth';
@@ -62,9 +53,6 @@ const Settings = () => {
     const fetchSettings = async () => {
       setLoading(true);
       try {
-        // In a real application, this would fetch from an API
-        // const response = await api.candidate.getSettings();
-        
         // Simulate API call with timeout
         await new Promise(resolve => setTimeout(resolve, 800));
         
@@ -174,9 +162,6 @@ const Settings = () => {
   // Handle save account settings
   const handleSaveAccount = async () => {
     try {
-      // In a real application, this would call the API
-      // await api.candidate.updateProfile(settings.accountSettings);
-      
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 800));
       
@@ -197,9 +182,6 @@ const Settings = () => {
   // Handle save notification settings
   const handleSaveNotifications = async () => {
     try {
-      // In a real application, this would call the API
-      // await api.candidate.updateNotificationSettings(settings.notificationSettings);
-      
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 800));
       
@@ -213,9 +195,6 @@ const Settings = () => {
   // Handle save privacy settings
   const handleSavePrivacy = async () => {
     try {
-      // In a real application, this would call the API
-      // await api.candidate.updatePrivacySettings(settings.privacySettings);
-      
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 800));
       
@@ -233,12 +212,6 @@ const Settings = () => {
     if (!validatePasswordForm()) return;
     
     try {
-      // In a real application, this would call the API
-      // await api.auth.changePassword({
-      //   currentPassword: passwordForm.currentPassword,
-      //   newPassword: passwordForm.newPassword
-      // });
-      
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 800));
       
@@ -274,9 +247,6 @@ const Settings = () => {
     setIsDeleting(true);
     
     try {
-      // In a real application, this would call the API
-      // await api.auth.deleteAccount();
-      
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500));
       
@@ -296,13 +266,8 @@ const Settings = () => {
     }
   };
   
-  if (loading) {
-    return <Loader />;
-  }
-  
-  if (error) {
-    return <ErrorMessage message={error} />;
-  }
+  if (loading) return <Loader />;
+  if (error) return <ErrorMessage message={error} />;
   
   return (
     <div className="space-y-6">
@@ -490,73 +455,39 @@ const Settings = () => {
         
         <div className="px-6 py-5">
           <div className="space-y-4">
-            <div className="flex items-start">
-              <div className="flex items-center h-5">
-                <input
-                  id="emailNotifications"
-                  name="emailNotifications"
-                  type="checkbox"
-                  checked={settings.notificationSettings.emailNotifications}
-                  onChange={handleNotificationChange}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                />
+            {[
+              { id: 'emailNotifications', 
+                label: 'Email Notifications', 
+                description: 'Receive email notifications for account activity' },
+              { id: 'jobAlerts', 
+                label: 'Job Alerts', 
+                description: 'Receive notifications for new jobs matching your profile' },
+              { id: 'interviewReminders', 
+                label: 'Interview Reminders', 
+                description: 'Receive reminders for upcoming interviews' },
+              { id: 'marketingEmails', 
+                label: 'Marketing Emails', 
+                description: 'Receive marketing and promotional emails' }
+            ].map((notification) => (
+              <div key={notification.id} className="flex items-start">
+                <div className="flex items-center h-5">
+                  <input
+                    id={notification.id}
+                    name={notification.id}
+                    type="checkbox"
+                    checked={settings.notificationSettings[notification.id]}
+                    onChange={handleNotificationChange}
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                </div>
+                <div className="ml-3 text-sm">
+                  <label htmlFor={notification.id} className="font-medium text-gray-700">
+                    {notification.label}
+                  </label>
+                  <p className="text-gray-500">{notification.description}</p>
+                </div>
               </div>
-              <div className="ml-3 text-sm">
-                <label htmlFor="emailNotifications" className="font-medium text-gray-700">Email Notifications</label>
-                <p className="text-gray-500">Receive email notifications for account activity</p>
-              </div>
-            </div>
-            
-            <div className="flex items-start">
-              <div className="flex items-center h-5">
-                <input
-                  id="jobAlerts"
-                  name="jobAlerts"
-                  type="checkbox"
-                  checked={settings.notificationSettings.jobAlerts}
-                  onChange={handleNotificationChange}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                />
-              </div>
-              <div className="ml-3 text-sm">
-                <label htmlFor="jobAlerts" className="font-medium text-gray-700">Job Alerts</label>
-                <p className="text-gray-500">Receive notifications for new jobs matching your profile</p>
-              </div>
-            </div>
-            
-            <div className="flex items-start">
-              <div className="flex items-center h-5">
-                <input
-                  id="interviewReminders"
-                  name="interviewReminders"
-                  type="checkbox"
-                  checked={settings.notificationSettings.interviewReminders}
-                  onChange={handleNotificationChange}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                />
-              </div>
-              <div className="ml-3 text-sm">
-                <label htmlFor="interviewReminders" className="font-medium text-gray-700">Interview Reminders</label>
-                <p className="text-gray-500">Receive reminders for upcoming interviews</p>
-              </div>
-            </div>
-            
-            <div className="flex items-start">
-              <div className="flex items-center h-5">
-                <input
-                  id="marketingEmails"
-                  name="marketingEmails"
-                  type="checkbox"
-                  checked={settings.notificationSettings.marketingEmails}
-                  onChange={handleNotificationChange}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                />
-              </div>
-              <div className="ml-3 text-sm">
-                <label htmlFor="marketingEmails" className="font-medium text-gray-700">Marketing Emails</label>
-                <p className="text-gray-500">Receive marketing and promotional emails</p>
-              </div>
-            </div>
+            ))}
           </div>
           
           <div className="mt-6 flex justify-end">

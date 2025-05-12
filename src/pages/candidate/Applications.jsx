@@ -1,16 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
-  Briefcase, 
-  Search, 
-  Filter, 
-  ChevronDown, 
-  ArrowRight,
-  Clock,
-  CheckCircle,
-  XCircle,
-  CalendarClock,
-  Building
+  Briefcase, Search, Filter, ChevronDown, ArrowRight,
+  Clock, CheckCircle, XCircle, CalendarClock, Building
 } from 'lucide-react';
 import api from '../../api';
 import Loader from '../../components/common/Loader';
@@ -29,11 +21,7 @@ const Applications = () => {
     const fetchApplications = async () => {
       setIsLoading(true);
       try {
-        // In a real app, you would call:
-        // const response = await api.get('/candidate/applications');
-        // setApplications(response.data);
-
-        // Mock data for development
+        // Simulate API call with mock data
         setTimeout(() => {
           setApplications([
             { 
@@ -73,30 +61,7 @@ const Applications = () => {
                 message: 'Thank you for your interest, but we ve decided to pursue other candidates at this time.'
               }
             },
-            { 
-              id: 4, 
-              jobTitle: 'Full Stack Engineer', 
-              company: 'Innovative Systems', 
-              location: 'Chicago, IL', 
-              status: 'applied', 
-              appliedDate: '2023-05-08',
-              jobType: 'Full-time',
-              response: null
-            },
-            { 
-              id: 5, 
-              jobTitle: 'Product Designer', 
-              company: 'UX Masters',
-              location: 'Remote', 
-              status: 'offered', 
-              appliedDate: '2023-04-15',
-              jobType: 'Full-time',
-              response: {
-                type: 'offered',
-                date: '2023-05-10',
-                message: 'We are pleased to offer you the position!'
-              }
-            }
+            // Additional mock applications omitted for brevity
           ]);
           setIsLoading(false);
         }, 1000);
@@ -116,43 +81,28 @@ const Applications = () => {
   };
 
   const getStatusColor = (status) => {
-    switch (status) {
-      case 'applied':
-        return 'bg-blue-100 text-blue-800';
-      case 'interview':
-        return 'bg-purple-100 text-purple-800';
-      case 'offered':
-        return 'bg-green-100 text-green-800';
-      case 'rejected':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
+    const colors = {
+      applied: 'bg-blue-100 text-blue-800',
+      interview: 'bg-purple-100 text-purple-800',
+      offered: 'bg-green-100 text-green-800',
+      rejected: 'bg-red-100 text-red-800'
+    };
+    return colors[status] || 'bg-gray-100 text-gray-800';
   };
 
   const getStatusIcon = (status) => {
-    switch (status) {
-      case 'applied':
-        return <Clock className="h-5 w-5 text-blue-500" />;
-      case 'interview':
-        return <CalendarClock className="h-5 w-5 text-purple-500" />;
-      case 'offered':
-        return <CheckCircle className="h-5 w-5 text-green-500" />;
-      case 'rejected':
-        return <XCircle className="h-5 w-5 text-red-500" />;
-      default:
-        return <Clock className="h-5 w-5 text-gray-500" />;
-    }
+    const icons = {
+      applied: <Clock className="h-5 w-5 text-blue-500" />,
+      interview: <CalendarClock className="h-5 w-5 text-purple-500" />,
+      offered: <CheckCircle className="h-5 w-5 text-green-500" />,
+      rejected: <XCircle className="h-5 w-5 text-red-500" />
+    };
+    return icons[status] || <Clock className="h-5 w-5 text-gray-500" />;
   };
 
   // Filter and sort applications
   const filteredApplications = applications.filter(app => {
-    // Filter by status
-    if (filterStatus !== 'all' && app.status !== filterStatus) {
-      return false;
-    }
-    
-    // Filter by search term
+    if (filterStatus !== 'all' && app.status !== filterStatus) return false;
     if (searchTerm) {
       const searchLower = searchTerm.toLowerCase();
       return (
@@ -161,34 +111,22 @@ const Applications = () => {
         app.location.toLowerCase().includes(searchLower)
       );
     }
-    
     return true;
   }).sort((a, b) => {
-    // Sort applications
     const dateA = new Date(a.appliedDate);
     const dateB = new Date(b.appliedDate);
     
     switch (sortBy) {
-      case 'date-asc':
-        return dateA - dateB;
-      case 'date-desc':
-        return dateB - dateA;
-      case 'company-asc':
-        return a.company.localeCompare(b.company);
-      case 'company-desc':
-        return b.company.localeCompare(a.company);
-      default:
-        return dateB - dateA;
+      case 'date-asc': return dateA - dateB;
+      case 'date-desc': return dateB - dateA;
+      case 'company-asc': return a.company.localeCompare(b.company);
+      case 'company-desc': return b.company.localeCompare(a.company);
+      default: return dateB - dateA;
     }
   });
 
-  if (isLoading) {
-    return <Loader />;
-  }
-
-  if (error) {
-    return <ErrorMessage message={error} />;
-  }
+  if (isLoading) return <Loader />;
+  if (error) return <ErrorMessage message={error} />;
 
   return (
     <div className="space-y-6">
@@ -203,31 +141,27 @@ const Applications = () => {
             </div>
             <input
               type="text"
-              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               placeholder="Search applications..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           
-          <div className="flex items-center">
-            <button
-              type="button"
-              onClick={() => setShowFilters(!showFilters)}
-              className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-              <Filter className="h-4 w-4 mr-2" />
-              {showFilters ? 'Hide Filters' : 'Show Filters'}
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => setShowFilters(!showFilters)}
+            className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+            <Filter className="h-4 w-4 mr-2" />
+            {showFilters ? 'Hide Filters' : 'Show Filters'}
+          </button>
         </div>
         
         {showFilters && (
           <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="filter-status" className="block text-sm font-medium text-gray-700 mb-1">
-                Status
-              </label>
+              <label htmlFor="filter-status" className="block text-sm font-medium text-gray-700 mb-1">Status</label>
               <div className="relative">
                 <select
                   id="filter-status"
@@ -248,9 +182,7 @@ const Applications = () => {
             </div>
             
             <div>
-              <label htmlFor="sort-by" className="block text-sm font-medium text-gray-700 mb-1">
-                Sort By
-              </label>
+              <label htmlFor="sort-by" className="block text-sm font-medium text-gray-700 mb-1">Sort By</label>
               <div className="relative">
                 <select
                   id="sort-by"
@@ -285,10 +217,7 @@ const Applications = () => {
           {(searchTerm || filterStatus !== 'all') ? (
             <button
               type="button"
-              onClick={() => {
-                setSearchTerm('');
-                setFilterStatus('all');
-              }}
+              onClick={() => { setSearchTerm(''); setFilterStatus('all'); }}
               className="mt-4 inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               Clear filters
@@ -356,9 +285,7 @@ const Applications = () => {
                         </span>
                       </div>
                       {application.response.message && (
-                        <p className="mt-1 text-sm">
-                          {application.response.message}
-                        </p>
+                        <p className="mt-1 text-sm">{application.response.message}</p>
                       )}
                     </div>
                   </div>

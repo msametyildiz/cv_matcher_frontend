@@ -1,18 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
-  Calendar, 
-  Clock, 
-  Video, 
-  MapPin, 
-  Phone, 
-  CheckCircle,
-  XCircle,
-  MessageCircle,
-  User,
-  ChevronDown,
-  Building,
-  AlertCircle
+  Calendar, Clock, Video, MapPin, Phone, CheckCircle,
+  XCircle, MessageCircle, User, Building, AlertCircle
 } from 'lucide-react';
 import api from '../../api';
 import Loader from '../../components/common/Loader';
@@ -34,10 +24,6 @@ const Interviews = () => {
     const fetchInterviews = async () => {
       setIsLoading(true);
       try {
-        // In a real app, we would call the API
-        // const response = await api.get('/candidate/interviews');
-        // setInterviews(response.data);
-
         // Mock data for development
         setTimeout(() => {
           setInterviews([
@@ -45,7 +31,6 @@ const Interviews = () => {
               id: 1,
               jobTitle: 'UX Designer',
               company: 'Creative Design Studio',
-              companyLogo: null,
               date: '2023-05-22',
               time: '10:00 AM',
               endTime: '10:45 AM',
@@ -66,7 +51,6 @@ const Interviews = () => {
               id: 2,
               jobTitle: 'Frontend Developer',
               company: 'Tech Solutions Inc.',
-              companyLogo: null,
               date: '2023-05-25',
               time: '02:30 PM',
               endTime: '03:30 PM',
@@ -85,7 +69,6 @@ const Interviews = () => {
               id: 3,
               jobTitle: 'Product Designer',
               company: 'UX Masters',
-              companyLogo: null,
               date: '2023-05-10',
               time: '11:00 AM',
               endTime: '12:00 PM',
@@ -107,7 +90,6 @@ const Interviews = () => {
               id: 4,
               jobTitle: 'Web Developer',
               company: 'Digital Agency',
-              companyLogo: null,
               date: '2023-04-28',
               time: '09:30 AM',
               endTime: '10:30 AM',
@@ -147,17 +129,11 @@ const Interviews = () => {
     const diffTime = interviewDate - today;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     
-    if (diffDays === 0) {
-      return 'Today';
-    } else if (diffDays === 1) {
-      return 'Tomorrow';
-    } else if (diffDays > 1 && diffDays < 7) {
-      return `In ${diffDays} days`;
-    } else if (diffDays >= 7 && diffDays < 14) {
-      return 'Next week';
-    } else {
-      return formatDate(dateString);
-    }
+    if (diffDays === 0) return 'Today';
+    if (diffDays === 1) return 'Tomorrow';
+    if (diffDays > 1 && diffDays < 7) return `In ${diffDays} days`;
+    if (diffDays >= 7 && diffDays < 14) return 'Next week';
+    return formatDate(dateString);
   };
 
   const handleViewDetails = (interview) => {
@@ -176,12 +152,8 @@ const Interviews = () => {
     
     setIsSubmitting(true);
     try {
-      // In a real app, we would call the API
-      // await api.post(`/candidate/interviews/${selectedInterview.id}/feedback`, { feedback: feedbackText });
-      
-      // Mock success for development
+      // Simulate API call
       setTimeout(() => {
-        // Update the interview in the local state
         setInterviews(interviews.map(interview => 
           interview.id === selectedInterview.id 
             ? { ...interview, userFeedback: feedbackText } 
@@ -216,38 +188,25 @@ const Interviews = () => {
   });
 
   const getStatusIcon = (status) => {
-    switch (status) {
-      case 'scheduled':
-        return <CheckCircle className="h-5 w-5 text-green-500" />;
-      case 'completed':
-        return <CheckCircle className="h-5 w-5 text-blue-500" />;
-      case 'cancelled':
-        return <XCircle className="h-5 w-5 text-red-500" />;
-      default:
-        return <Clock className="h-5 w-5 text-gray-500" />;
-    }
+    const icons = {
+      scheduled: <CheckCircle className="h-5 w-5 text-green-500" />,
+      completed: <CheckCircle className="h-5 w-5 text-blue-500" />,
+      cancelled: <XCircle className="h-5 w-5 text-red-500" />
+    };
+    return icons[status] || <Clock className="h-5 w-5 text-gray-500" />;
   };
 
   const getInterviewTypeIcon = (type) => {
-    switch (type) {
-      case 'video':
-        return <Video className="h-5 w-5 text-purple-500" />;
-      case 'phone':
-        return <Phone className="h-5 w-5 text-blue-500" />;
-      case 'onsite':
-        return <MapPin className="h-5 w-5 text-green-500" />;
-      default:
-        return <MessageCircle className="h-5 w-5 text-gray-500" />;
-    }
+    const icons = {
+      video: <Video className="h-5 w-5 text-purple-500" />,
+      phone: <Phone className="h-5 w-5 text-blue-500" />,
+      onsite: <MapPin className="h-5 w-5 text-green-500" />
+    };
+    return icons[type] || <MessageCircle className="h-5 w-5 text-gray-500" />;
   };
 
-  if (isLoading) {
-    return <Loader />;
-  }
-
-  if (error) {
-    return <ErrorMessage message={error} />;
-  }
+  if (isLoading) return <Loader />;
+  if (error) return <ErrorMessage message={error} />;
 
   return (
     <div className="space-y-6">
@@ -257,36 +216,19 @@ const Interviews = () => {
       <div className="bg-white rounded-lg shadow-sm">
         <div className="border-b border-gray-200">
           <nav className="flex -mb-px">
-            <button
-              className={`py-4 px-6 border-b-2 text-sm font-medium ${
-                filter === 'upcoming'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-              onClick={() => setFilter('upcoming')}
-            >
-              Upcoming
-            </button>
-            <button
-              className={`py-4 px-6 border-b-2 text-sm font-medium ${
-                filter === 'past'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-              onClick={() => setFilter('past')}
-            >
-              Past
-            </button>
-            <button
-              className={`py-4 px-6 border-b-2 text-sm font-medium ${
-                filter === 'cancelled'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-              onClick={() => setFilter('cancelled')}
-            >
-              Cancelled
-            </button>
+            {['upcoming', 'past', 'cancelled'].map((tab) => (
+              <button
+                key={tab}
+                className={`py-4 px-6 border-b-2 text-sm font-medium ${
+                  filter === tab
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+                onClick={() => setFilter(tab)}
+              >
+                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              </button>
+            ))}
           </nav>
         </div>
       </div>
@@ -439,26 +381,18 @@ const Interviews = () => {
         <div className="bg-white rounded-lg shadow-sm p-6">
           <h2 className="text-lg font-medium text-gray-900 mb-4">Interview Prep Tips</h2>
           <ul className="space-y-2 text-sm text-gray-600">
-            <li className="flex items-start">
-              <CheckCircle className="h-5 w-5 text-green-500 mr-2 mt-0.5" />
-              <span>Research the company and role thoroughly before your interview</span>
-            </li>
-            <li className="flex items-start">
-              <CheckCircle className="h-5 w-5 text-green-500 mr-2 mt-0.5" />
-              <span>Prepare examples of your work and achievements relevant to the position</span>
-            </li>
-            <li className="flex items-start">
-              <CheckCircle className="h-5 w-5 text-green-500 mr-2 mt-0.5" />
-              <span>Test your equipment and internet connection ahead of time for virtual interviews</span>
-            </li>
-            <li className="flex items-start">
-              <CheckCircle className="h-5 w-5 text-green-500 mr-2 mt-0.5" />
-              <span>Prepare thoughtful questions to ask your interviewers</span>
-            </li>
-            <li className="flex items-start">
-              <CheckCircle className="h-5 w-5 text-green-500 mr-2 mt-0.5" />
-              <span>Follow up with a thank you email within 24 hours after your interview</span>
-            </li>
+            {[
+              "Research the company and role thoroughly before your interview",
+              "Prepare examples of your work and achievements relevant to the position",
+              "Test your equipment and internet connection ahead of time for virtual interviews",
+              "Prepare thoughtful questions to ask your interviewers",
+              "Follow up with a thank you email within 24 hours after your interview"
+            ].map((tip, index) => (
+              <li key={index} className="flex items-start">
+                <CheckCircle className="h-5 w-5 text-green-500 mr-2 mt-0.5" />
+                <span>{tip}</span>
+              </li>
+            ))}
           </ul>
         </div>
       )}
@@ -556,41 +490,7 @@ const Interviews = () => {
               </div>
             )}
             
-            {selectedInterview.notes && (
-              <div className="mb-6">
-                <h4 className="text-md font-medium text-gray-900 mb-2">Your Notes</h4>
-                <div className="bg-gray-50 border border-gray-200 rounded-md p-4 text-sm text-gray-700">
-                  {selectedInterview.notes}
-                </div>
-              </div>
-            )}
-            
-            {selectedInterview.status === 'cancelled' && selectedInterview.cancellationReason && (
-              <div className="mb-6">
-                <h4 className="text-md font-medium text-gray-900 mb-2">Cancellation Reason</h4>
-                <div className="bg-red-50 border border-red-200 rounded-md p-4 text-sm text-red-700">
-                  {selectedInterview.cancellationReason}
-                </div>
-              </div>
-            )}
-            
-            {selectedInterview.status === 'completed' && selectedInterview.feedback && (
-              <div className="mb-6">
-                <h4 className="text-md font-medium text-gray-900 mb-2">Feedback Received</h4>
-                <div className="bg-blue-50 border border-blue-200 rounded-md p-4 text-sm text-blue-700">
-                  {selectedInterview.feedback}
-                </div>
-              </div>
-            )}
-            
-            {selectedInterview.userFeedback && (
-              <div className="mb-6">
-                <h4 className="text-md font-medium text-gray-900 mb-2">Your Feedback</h4>
-                <div className="bg-gray-50 border border-gray-200 rounded-md p-4 text-sm text-gray-700">
-                  {selectedInterview.userFeedback}
-                </div>
-              </div>
-            )}
+            {/* Additional sections like notes, cancellation reason, feedback, etc. */}
             
             <div className="flex justify-end space-x-3 mt-6">
               <button

@@ -1,15 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
-  Briefcase, 
-  FileText, 
-  Calendar, 
-  ChevronRight, 
-  Clock, 
-  CheckCircle,
-  XCircle,
-  AlertCircle,
-  BarChart2
+  Briefcase, FileText, Calendar, ChevronRight, Clock, 
+  CheckCircle, XCircle, AlertCircle, BarChart2, Building
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import api from '../../api';
@@ -26,10 +19,6 @@ const CandidateDashboard = () => {
     const fetchDashboardData = async () => {
       setIsLoading(true);
       try {
-        // In a real app, you would call:
-        // const response = await api.get('/candidate/dashboard');
-        // setDashboardData(response.data);
-
         // Mock data for development
         setTimeout(() => {
           setDashboardData({
@@ -118,27 +107,17 @@ const CandidateDashboard = () => {
   };
 
   const getStatusIcon = (status) => {
-    switch (status) {
-      case 'applied':
-        return <Clock className="h-5 w-5 text-blue-500" />;
-      case 'interview':
-        return <Calendar className="h-5 w-5 text-purple-500" />;
-      case 'offered':
-        return <CheckCircle className="h-5 w-5 text-green-500" />;
-      case 'rejected':
-        return <XCircle className="h-5 w-5 text-red-500" />;
-      default:
-        return <AlertCircle className="h-5 w-5 text-gray-500" />;
-    }
+    const icons = {
+      applied: <Clock className="h-5 w-5 text-blue-500" />,
+      interview: <Calendar className="h-5 w-5 text-purple-500" />,
+      offered: <CheckCircle className="h-5 w-5 text-green-500" />,
+      rejected: <XCircle className="h-5 w-5 text-red-500" />
+    };
+    return icons[status] || <AlertCircle className="h-5 w-5 text-gray-500" />;
   };
 
-  if (isLoading) {
-    return <Loader />;
-  }
-
-  if (error) {
-    return <ErrorMessage message={error} />;
-  }
+  if (isLoading) return <Loader />;
+  if (error) return <ErrorMessage message={error} />;
 
   return (
     <div className="space-y-6">
@@ -172,53 +151,24 @@ const CandidateDashboard = () => {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-lg shadow-sm p-4">
-          <div className="flex items-center">
-            <div className="p-2 rounded-full bg-blue-100 text-blue-600 mr-3">
-              <Briefcase className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Applications</p>
-              <p className="text-lg font-semibold">{dashboardData.stats.totalApplications}</p>
-            </div>
-          </div>
-        </div>
-        
-        <div className="bg-white rounded-lg shadow-sm p-4">
-          <div className="flex items-center">
-            <div className="p-2 rounded-full bg-green-100 text-green-600 mr-3">
-              <Clock className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Active Applications</p>
-              <p className="text-lg font-semibold">{dashboardData.stats.activeApplications}</p>
+        {[
+          { icon: <Briefcase className="h-5 w-5" />, label: 'Applications', value: dashboardData.stats.totalApplications, color: 'blue' },
+          { icon: <Clock className="h-5 w-5" />, label: 'Active Applications', value: dashboardData.stats.activeApplications, color: 'green' },
+          { icon: <Calendar className="h-5 w-5" />, label: 'Interviews', value: dashboardData.stats.interviews, color: 'purple' },
+          { icon: <BarChart2 className="h-5 w-5" />, label: 'Saved Jobs', value: dashboardData.stats.savedJobs, color: 'yellow' }
+        ].map((stat, index) => (
+          <div key={index} className="bg-white rounded-lg shadow-sm p-4">
+            <div className="flex items-center">
+              <div className={`p-2 rounded-full bg-${stat.color}-100 text-${stat.color}-600 mr-3`}>
+                {stat.icon}
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">{stat.label}</p>
+                <p className="text-lg font-semibold">{stat.value}</p>
+              </div>
             </div>
           </div>
-        </div>
-        
-        <div className="bg-white rounded-lg shadow-sm p-4">
-          <div className="flex items-center">
-            <div className="p-2 rounded-full bg-purple-100 text-purple-600 mr-3">
-              <Calendar className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Interviews</p>
-              <p className="text-lg font-semibold">{dashboardData.stats.interviews}</p>
-            </div>
-          </div>
-        </div>
-        
-        <div className="bg-white rounded-lg shadow-sm p-4">
-          <div className="flex items-center">
-            <div className="p-2 rounded-full bg-yellow-100 text-yellow-600 mr-3">
-              <BarChart2 className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Saved Jobs</p>
-              <p className="text-lg font-semibold">{dashboardData.stats.savedJobs}</p>
-            </div>
-          </div>
-        </div>
+        ))}
       </div>
 
       {/* Main Content */}
