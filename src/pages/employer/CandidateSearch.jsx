@@ -7,9 +7,9 @@ import CandidateCard from '../../components/candidates/CandidateCard';
 import SearchFilters from '../../components/candidates/SearchFilters';
 import ActiveFilters from '../../components/candidates/ActiveFilters';
 import Pagination from '../../components/common/Pagination';
-import { useSearchFilters } from '../../hooks/useSearchFilters';
-import { usePagination } from '../../hooks/usePagination';
-import { useCandidateSearch } from '../../hooks/useCandidateSearch';
+import useSearchFilters from '../../hooks/useSearchFilters';
+import usePagination from '../../hooks/usePagination';
+import useCandidateSearch from '../../hooks/useCandidateSearch';
 
 const CandidateSearch = () => {
   // Custom hooks for search functionality

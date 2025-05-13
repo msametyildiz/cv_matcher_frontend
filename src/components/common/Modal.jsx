@@ -2,7 +2,6 @@
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { X } from 'lucide-react';
-import clsx from 'clsx';
 
 const Modal = ({ 
   isOpen, 
@@ -55,6 +54,11 @@ const Modal = ({
     full: 'max-w-full mx-4'
   };
   
+  // Helper function to replace clsx
+  const classNames = (...classes) => {
+    return classes.filter(Boolean).join(' ');
+  };
+  
   return ReactDOM.createPortal(
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div 
@@ -64,7 +68,7 @@ const Modal = ({
       
       <div className="flex items-center justify-center min-h-screen p-4">
         <div 
-          className={clsx(
+          className={classNames(
             'bg-white rounded-lg shadow-xl transform transition-all w-full',
             'overflow-hidden relative z-10',
             sizeClasses[size] || sizeClasses.md

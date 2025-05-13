@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { Menu, X, User, Bell, LogOut } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 
@@ -7,11 +7,11 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { user, logout, isAuthenticated } = useAuth();
-  const navigate = useNavigate();
+  const history = useHistory();
   
   const handleLogout = async () => {
     await logout();
-    navigate('/');
+    history.push('/');
   };
   
   const getDashboardLink = () => {

@@ -14,7 +14,7 @@ import ErrorMessage from '../../components/common/ErrorMessage';
 import ConfirmModal from '../../components/common/ConfirmModal';
 import JobDetailModal from '../../components/jobs/JobDetailModal';
 import FilterBar from '../../components/jobs/FilterBar';
-import { useTableControls } from '../../hooks/useTableControls';
+import useTableControls from '../../hooks/useTableControls';
 import { mockJobsData } from '../../data/mockData';
 
 const JobManagement = () => {

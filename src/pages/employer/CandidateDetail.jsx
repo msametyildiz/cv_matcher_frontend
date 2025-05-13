@@ -13,7 +13,7 @@ import ContactInfo from '../../components/candidates/ContactInfo';
 import CandidateCV from '../../components/candidates/CandidateCV';
 import ExperienceItem from '../../components/candidates/ExperienceItem';
 import MatchingJobItem from '../../components/candidates/MatchingJobItem';
-import { useCandidateData } from '../../hooks/useCandidateData';
+import useCandidateData from '../../hooks/useCandidateData';
 import { formatDate, formatDateRange, getTimeSinceLastActive } from '../../utils/dateUtils';
 
 const CandidateDetail = () => {

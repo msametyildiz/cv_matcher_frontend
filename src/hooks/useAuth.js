@@ -1,5 +1,5 @@
 import { useContext, useEffect } from 'react';
-import { AuthContext } from '../contexts/AuthContext';
+import { AuthContext, useAuth as useAuthContext } from '../contexts/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 export const useAuth = () => {
@@ -38,5 +38,3 @@ export const useAuthRedirect = () => {
   
   return { isAuthenticated };
 };
-
-export default useAuth;

@@ -10,8 +10,8 @@ import StatusBadge from '../../components/common/StatusBadge';
 import ConfirmModal from '../../components/common/ConfirmModal';
 import CVDetailModal from '../../components/cv/CVDetailModal';
 import FilterBar from '../../components/cv/FilterBar';
-import { useSelection } from '../../hooks/useSelection';
-import { useTableControls } from '../../hooks/useTableControls';
+import useSelection from '../../hooks/useSelection';
+import useTableControls from '../../hooks/useTableControls';
 import { mockCVData } from '../../data/mockData';
 
 const CVManagement = () => {
