@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Outlet, useLocation, Link } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import { 
   Home, 
   Briefcase, 
@@ -16,7 +16,7 @@ import { useAuth } from '../../hooks/useAuth';
 import Navbar from './Navbar';
 import Footer from './Footer';
 
-const MainLayout = () => {
+const MainLayout = ({ children }) => {
   const { user, logout } = useAuth();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -62,8 +62,12 @@ const MainLayout = () => {
   const navigation = getNavigation();
   
   return (
-    <div className="min-h-screen bg-gray-100">
-      <Navbar />
+    <div className="flex flex-col min-h-screen">
+      <header className="bg-white shadow">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <h1 className="text-xl font-bold text-gray-900">CV Matcher</h1>
+        </div>
+      </header>
       
       <div className="flex h-screen overflow-hidden pt-16">
         {/* Sidebar for desktop */}
@@ -173,14 +177,20 @@ const MainLayout = () => {
             <div className="py-6">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
                 {/* Main content area */}
-                <Outlet />
+                {children}
               </div>
             </div>
           </main>
         </div>
       </div>
       
-      <Footer />
+      <footer className="bg-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <p className="text-center text-gray-500 text-sm">
+            &copy; {new Date().getFullYear()} CV Matcher. All rights reserved.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 };

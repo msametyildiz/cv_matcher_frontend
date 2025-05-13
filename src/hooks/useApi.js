@@ -1,5 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
-import axios from 'axios';
+import { useState, useCallback } from 'react';
 
 /**
  * Custom hook for making API calls with state management for loading, error, and response data.
@@ -17,133 +16,52 @@ import axios from 'axios';
  * @param {boolean} options.useAuthToken - Whether to include auth token in requests
  * @returns {Object} API call state and control functions
  */
-const useApi = ({
-  url,
-  method = 'GET',
-  data = null,
-  params = null,
-  headers = {},
-  autoFetch = false,
-  dependencies = [],
-  onSuccess = null,
-  onError = null,
-  useAuthToken = true,
-}) => {
-  const [response, setResponse] = useState(null);
+const useApi = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [controller, setController] = useState(null);
 
-  // Prepare the API call configuration
-  const prepareConfig = useCallback(() => {
-    // Setup request configuration
-    const config = {
-      url,
-      method,
-      headers: { ...headers },
-      params,
-      data,
-    };
-
-    // Add auth token if required
-    if (useAuthToken) {
-      const token = localStorage.getItem('token');
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-    }
-
-    // Create abort controller for request cancellation
-    const abortController = new AbortController();
-    setController(abortController);
-    config.signal = abortController.signal;
-
-    return config;
-  }, [url, method, data, params, headers, useAuthToken]);
-
-  // Execute the API call
-  const execute = useCallback(async (overrideConfig = {}) => {
-    // Skip if no URL
-    if (!url) return;
-
-    // Cancel any in-flight requests
-    if (controller) {
-      controller.abort();
-    }
-
-    // Start loading
+  const callApi = useCallback(async (endpoint, options = {}) => {
     setLoading(true);
     setError(null);
-
+    
     try {
-      // Prepare request config with possible overrides
-      const config = {
-        ...prepareConfig(),
-        ...overrideConfig,
-      };
-
-      // Make the request
-      const result = await axios(config);
-      setResponse(result.data);
-
-      // Call success callback if provided
-      if (onSuccess) {
-        onSuccess(result.data);
-      }
-
-      return result.data;
-    } catch (err) {
-      // Ignore aborted requests
-      if (axios.isCancel(err)) {
-        console.log('Request canceled:', err.message);
-        return;
-      }
-
-      // Determine error message
-      const errorMessage = err.response?.data?.message || err.message || 'An error occurred';
+      // In a real app, this would be a fetch call to your API
+      // For now, we'll simulate API responses with mock data
+      await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
       
-      // Set error state
-      setError({
-        message: errorMessage,
-        status: err.response?.status,
-        data: err.response?.data,
-      });
-
-      // Call error callback if provided
-      if (onError) {
-        onError(err);
+      // Simulate different responses based on endpoint
+      if (endpoint.includes('error')) {
+        throw new Error('API Error');
       }
-
-      throw err;
+      
+      // Return mock data based on endpoint
+      return {
+        success: true,
+        data: { message: 'Mock API response for ' + endpoint }
+      };
+    } catch (err) {
+      setError(err.message);
+      return {
+        success: false,
+        error: err.message
+      };
     } finally {
       setLoading(false);
     }
-  }, [url, controller, prepareConfig, onSuccess, onError]);
-
-  // Auto fetch on mount or when dependencies change
-  useEffect(() => {
-    if (autoFetch) {
-      execute();
-    }
-
-    // Cleanup: abort request on unmount
-    return () => {
-      if (controller) {
-        controller.abort();
-      }
-    };
-  }, [autoFetch, execute, ...dependencies]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   return {
-    data: response,
     loading,
     error,
-    execute,
-    reset: () => {
-      setResponse(null);
-      setError(null);
-    },
+    callApi,
+    // Export common API methods
+    get: (endpoint) => callApi(endpoint, { method: 'GET' }),
+    post: (endpoint, data) => callApi(endpoint, { method: 'POST', data }),
+    put: (endpoint, data) => callApi(endpoint, { method: 'PUT', data }),
+    delete: (endpoint) => callApi(endpoint, { method: 'DELETE' })
   };
 };
 
+// Both named and default exports
+export { useApi };
 export default useApi;

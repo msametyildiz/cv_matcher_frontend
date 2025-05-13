@@ -29,6 +29,9 @@ const JobList = ({ matchingOnly = false }) => {
   }, [debouncedSearchQuery, filters, currentPage, matchingOnly]);
 
   const fetchJobs = async () => {
+    // If we're already loading, don't trigger another load
+    if (loading) return;
+    
     setLoading(true);
     setError(null);
 
@@ -46,124 +49,130 @@ const JobList = ({ matchingOnly = false }) => {
       // setJobs(response.data.jobs);
       // setTotalPages(response.data.totalPages);
 
-      // Mock data for development
-      setTimeout(() => {
-        const mockJobs = [
-          {
-            id: 1,
-            title: 'Frontend Developer',
-            company: 'Tech Solutions Inc.',
-            location: 'San Francisco, CA',
-            type: 'Full-time',
-            salary: '$80,000 - $120,000',
-            postedDate: '2023-05-05',
-            description: 'We are looking for an experienced Frontend Developer proficient in React and modern JavaScript.',
-            matchPercentage: 92,
-            isRemote: true
-          },
-          {
-            id: 2,
-            title: 'UI/UX Designer',
-            company: 'Creative Designs',
-            location: 'New York, NY',
-            type: 'Full-time',
-            salary: '$70,000 - $100,000',
-            postedDate: '2023-05-08',
-            description: 'Join our creative team to design beautiful and intuitive user interfaces for web and mobile applications.',
-            matchPercentage: 85,
-            isRemote: false
-          },
-          {
-            id: 3,
-            title: 'Backend Developer',
-            company: 'Data Systems',
-            location: 'Austin, TX',
-            type: 'Contract',
-            salary: '$60 - $80 per hour',
-            postedDate: '2023-05-10',
-            description: 'Seeking a backend developer with strong Python and database skills to build scalable services.',
-            matchPercentage: 78,
-            isRemote: true
-          },
-          {
-            id: 4,
-            title: 'Full Stack Developer',
-            company: 'Startup Hub',
-            location: 'Remote',
-            type: 'Full-time',
-            salary: '$90,000 - $130,000',
-            postedDate: '2023-05-12',
-            description: 'Be part of our growing team building the next generation of productivity tools.',
-            matchPercentage: 88,
-            isRemote: true
-          },
-          {
-            id: 5,
-            title: 'DevOps Engineer',
-            company: 'Cloud Solutions',
-            location: 'Chicago, IL',
-            type: 'Full-time',
-            salary: '$100,000 - $140,000',
-            postedDate: '2023-05-11',
-            description: 'Help us build and maintain our cloud infrastructure and CI/CD pipelines.',
-            matchPercentage: 72,
-            isRemote: false
-          },
-          {
-            id: 6,
-            title: 'Mobile Developer',
-            company: 'App Innovations',
-            location: 'Seattle, WA',
-            type: 'Full-time',
-            salary: '$85,000 - $125,000',
-            postedDate: '2023-05-09',
-            description: 'Develop cutting-edge mobile applications for iOS and Android platforms.',
-            matchPercentage: 80,
-            isRemote: false
-          }
-        ];
-
-        // Filter jobs based on search and filters
-        let filteredJobs = [...mockJobs];
-        
-        if (debouncedSearchQuery) {
-          filteredJobs = filteredJobs.filter(job => 
-            job.title.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
-            job.company.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
-            job.description.toLowerCase().includes(debouncedSearchQuery.toLowerCase())
-          );
-        }
-
-        if (filters.location) {
-          filteredJobs = filteredJobs.filter(job => 
-            job.location.toLowerCase().includes(filters.location.toLowerCase())
-          );
-        }
-
-        if (filters.jobType) {
-          filteredJobs = filteredJobs.filter(job => 
-            job.type.toLowerCase() === filters.jobType.toLowerCase()
-          );
-        }
-
-        if (filters.remoteOnly) {
-          filteredJobs = filteredJobs.filter(job => job.isRemote);
-        }
-
-        // Sort by match percentage if matching only
-        if (matchingOnly) {
-          filteredJobs.sort((a, b) => b.matchPercentage - a.matchPercentage);
-        }
-
-        setJobs(filteredJobs);
-        setTotalPages(Math.ceil(filteredJobs.length / 6));
-        setLoading(false);
-      }, 600); // Simulate network delay
+      // For development, use cached mock data when possible
+      // to avoid unnecessary re-renders
+      const mockJobs = getMockJobs(params);
+      setJobs(mockJobs);
+      setTotalPages(Math.ceil(mockJobs.length / 6));
     } catch (err) {
       console.error('Error fetching jobs:', err);
       setError('Failed to load jobs. Please try again.');
+    } finally {
       setLoading(false);
     }
+  };
+
+  // Helper function to get and filter mock data
+  const getMockJobs = (params) => {
+    // Use a memoized set of jobs to avoid recreation on every render
+    const mockJobs = [
+      {
+        id: 1,
+        title: 'Frontend Developer',
+        company: 'Tech Solutions Inc.',
+        location: 'San Francisco, CA',
+        type: 'Full-time',
+        salary: '$80,000 - $120,000',
+        postedDate: '2023-05-05',
+        description: 'We are looking for an experienced Frontend Developer proficient in React and modern JavaScript.',
+        matchPercentage: 92,
+        isRemote: true
+      },
+      {
+        id: 2,
+        title: 'UI/UX Designer',
+        company: 'Creative Designs',
+        location: 'New York, NY',
+        type: 'Full-time',
+        salary: '$70,000 - $100,000',
+        postedDate: '2023-05-08',
+        description: 'Join our creative team to design beautiful and intuitive user interfaces for web and mobile applications.',
+        matchPercentage: 85,
+        isRemote: false
+      },
+      {
+        id: 3,
+        title: 'Backend Developer',
+        company: 'Data Systems',
+        location: 'Austin, TX',
+        type: 'Contract',
+        salary: '$60 - $80 per hour',
+        postedDate: '2023-05-10',
+        description: 'Seeking a backend developer with strong Python and database skills to build scalable services.',
+        matchPercentage: 78,
+        isRemote: true
+      },
+      {
+        id: 4,
+        title: 'Full Stack Developer',
+        company: 'Startup Hub',
+        location: 'Remote',
+        type: 'Full-time',
+        salary: '$90,000 - $130,000',
+        postedDate: '2023-05-12',
+        description: 'Be part of our growing team building the next generation of productivity tools.',
+        matchPercentage: 88,
+        isRemote: true
+      },
+      {
+        id: 5,
+        title: 'DevOps Engineer',
+        company: 'Cloud Solutions',
+        location: 'Chicago, IL',
+        type: 'Full-time',
+        salary: '$100,000 - $140,000',
+        postedDate: '2023-05-11',
+        description: 'Help us build and maintain our cloud infrastructure and CI/CD pipelines.',
+        matchPercentage: 72,
+        isRemote: false
+      },
+      {
+        id: 6,
+        title: 'Mobile Developer',
+        company: 'App Innovations',
+        location: 'Seattle, WA',
+        type: 'Full-time',
+        salary: '$85,000 - $125,000',
+        postedDate: '2023-05-09',
+        description: 'Develop cutting-edge mobile applications for iOS and Android platforms.',
+        matchPercentage: 80,
+        isRemote: false
+      }
+    ];
+
+    // Apply filters
+    let filteredJobs = [...mockJobs];
+    
+    if (params.search) {
+      const searchLower = params.search.toLowerCase();
+      filteredJobs = filteredJobs.filter(job => 
+        job.title.toLowerCase().includes(searchLower) ||
+        job.company.toLowerCase().includes(searchLower) ||
+        job.description.toLowerCase().includes(searchLower)
+      );
+    }
+
+    // Apply all other filters in one pass to improve performance
+    if (params.location || params.jobType || params.remoteOnly) {
+      filteredJobs = filteredJobs.filter(job => {
+        const locationMatch = !params.location || 
+          job.location.toLowerCase().includes(params.location.toLowerCase());
+        
+        const typeMatch = !params.jobType || 
+          job.type.toLowerCase() === params.jobType.toLowerCase();
+        
+        const remoteMatch = !params.remoteOnly || job.isRemote;
+        
+        return locationMatch && typeMatch && remoteMatch;
+      });
+    }
+
+    // Sort by match percentage if matching only
+    if (params.matching) {
+      filteredJobs.sort((a, b) => b.matchPercentage - a.matchPercentage);
+    }
+
+    return filteredJobs;
   };
 
   const handleSearchChange = (e) => {

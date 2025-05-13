@@ -61,22 +61,8 @@ const EditJob = () => {
       
       if (!values.description.trim()) {
         errors.description = 'Job description is required';
-      } else if (values.description.length < 100) {
-        errors.description = 'Job description should be at least 100 characters';
-      }
-      
-      // Salary validation
-      if (values.salaryMin && values.salaryMax) {
-        const min = parseFloat(values.salaryMin);
-        const max = parseFloat(values.salaryMax);
-        
-        if (min > max) errors.salary = 'Minimum salary cannot be greater than maximum';
-      }
-      
-      // Application deadline validation
-      if (values.applicationDeadline) {
-        const deadlineDate = new Date(values.applicationDeadline);
-        if (deadlineDate < new Date()) errors.applicationDeadline = 'Deadline cannot be in the past';
+      } else if (values.description.trim().length < 50) {
+        errors.description = 'Job description should be at least 50 characters';
       }
       
       return errors;

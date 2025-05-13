@@ -3,7 +3,8 @@ import { toast } from 'react-hot-toast';
 import api from '../api';
 import { setAuthToken, removeAuthToken, getAuthToken } from '../utils/storage';
 
-export const AuthContext = createContext();
+// Create the context and export it
+export const AuthContext = createContext(null);
 
 /**
  * Auth Provider Component - Manages authentication state and provides auth methods

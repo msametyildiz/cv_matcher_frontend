@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState } from 'react';
 
 /**
  * Custom hook for managing form state, validation, and submission.
@@ -47,7 +47,6 @@ const useForm = ({
   transform,
   dependencies = []
 }) => {
-  // Initialize form state
   const [values, setValues] = useState(initialValues);
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});

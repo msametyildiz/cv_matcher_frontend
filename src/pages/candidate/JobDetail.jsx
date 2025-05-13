@@ -157,29 +157,32 @@ const JobDetail = () => {
     const diffTime = Math.abs(deadline - today);
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     
-    if (diffDays === 0) return 'Today';
-    if (diffDays === 1) return 'Tomorrow';
+    if (diffDays === 0) {
+      return 'Today';
+    }
+    if (diffDays === 1) {
+      return 'Tomorrow';
+    }
     return `${diffDays} days`;
   };
 
   // Handle job application
   const handleApply = async () => {
     if (!selectedCV) {
-      showError('Please select a CV to apply');
+      toast.error('Please select a CV to apply with');
       return;
     }
     
     setIsSubmitting(true);
     
     try {
-      // Simulate API call success
-      setTimeout(() => {
-        success('Application submitted successfully');
-        setShowApplyModal(false);
-        setApplicationNote('');
-      }, 1000);
+      // In real app: await api.job.applyToJob(jobId, selectedCV, applicationNote);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      toast.success('Application submitted successfully!');
+      setShowApplyModal(false);
     } catch (err) {
-      showError('Failed to submit application');
+      toast.error('Failed to submit application. Please try again.');
+      console.error('Application error:', err);
     } finally {
       setIsSubmitting(false);
     }
@@ -189,9 +192,11 @@ const JobDetail = () => {
   const toggleBookmark = async () => {
     try {
       setIsBookmarked(!isBookmarked);
-      success(isBookmarked ? 'Removed from saved jobs' : 'Added to saved jobs');
+      // In real app: await api.job.toggleBookmark(jobId);
+      toast.success(isBookmarked ? 'Job removed from bookmarks' : 'Job added to bookmarks');
     } catch (err) {
-      showError('Failed to update saved jobs');
+      setIsBookmarked(!isBookmarked); // Revert on failure
+      toast.error('Failed to update bookmark status');
     }
   };
 
@@ -199,23 +204,21 @@ const JobDetail = () => {
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({
-        title: `${job?.title} at ${job?.company}`,
+        title: job?.title,
         text: `Check out this job: ${job?.title} at ${job?.company}`,
         url: window.location.href
-      })
-      .then(() => success('Job shared successfully'))
-      .catch(() => {});
+      });
     } else {
-      // Fallback for browsers that don't support the Web Share API
-      navigator.clipboard.writeText(window.location.href)
-        .then(() => success('Job URL copied to clipboard'))
-        .catch(() => showError('Failed to copy URL'));
+      // Fallback - copy to clipboard
+      navigator.clipboard.writeText(window.location.href);
+      toast.success('Link copied to clipboard');
     }
   };
 
   // Handle report job
   const handleReport = () => {
-    success('Thank you for reporting this job. We will review it shortly.');
+    // Implementation for reporting inappropriate job listings
+    toast.success('Thank you for your report. We will review this listing.');
   };
 
   return (

@@ -215,7 +215,16 @@ export const UI = {
     SM: 640,
     MD: 768,
     LG: 1024,
-    XL: 1280
+    XL: 1280,
+    XXL: 1536
+  },
+  SPACING: {
+    XS: '0.25rem',
+    SM: '0.5rem',
+    MD: '1rem',
+    LG: '1.5rem',
+    XL: '2rem',
+    XXL: '3rem'
   },
   PAGINATION: {
     DEFAULT_PAGE_SIZE: 10,

@@ -155,8 +155,7 @@ const Settings = () => {
       errors.confirmPassword = 'Passwords do not match';
     }
     
-    setPasswordErrors(errors);
-    return Object.keys(errors).length === 0;
+    return Object.keys(errors).length === 0 ? true : errors;
   };
   
   // Handle save account settings
