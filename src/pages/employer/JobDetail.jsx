@@ -11,7 +11,6 @@ import {
   Trash2,
   Users,
   Eye,
-  CheckCircle,
   XCircle,
   AlertTriangle,
   Share2,
@@ -19,7 +18,6 @@ import {
   BarChart2
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
-import api from '../../api';
 import { useApi } from '../../hooks/useApi';
 import Loader from '../../components/common/Loader';
 import ErrorMessage from '../../components/common/ErrorMessage';
@@ -62,7 +60,7 @@ const JobDetail = () => {
   // Set up mock data for development
   useEffect(() => {
     if (!job && !loading && !error) {
-      // Mock job data for development
+      // eslint-disable-next-line no-unused-vars
       const mockJob = {
         id: parseInt(jobId),
         title: 'Senior Full Stack Developer',

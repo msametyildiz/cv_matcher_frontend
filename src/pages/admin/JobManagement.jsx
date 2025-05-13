@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
-  Search, Filter, RefreshCw, Briefcase, Eye, Edit, Trash2,
-  ChevronDown, MapPin, ChevronsUpDown, ChevronUp
+  RefreshCw, Briefcase, Eye, Edit, Trash2,
+  MapPin
 } from 'lucide-react';
 import { useApi } from '../../hooks/useApi';
-import { useDebounce } from '../../hooks/useDebounce';
 import { useNotification } from '../../contexts/NotificationContext';
 import AdminPageLayout from '../../components/layouts/AdminPageLayout';
 import DataTable from '../../components/common/DataTable';
-import Loader from '../../components/common/Loader';
-import ErrorMessage from '../../components/common/ErrorMessage';
 import ConfirmModal from '../../components/common/ConfirmModal';
 import JobDetailModal from '../../components/jobs/JobDetailModal';
 import FilterBar from '../../components/jobs/FilterBar';

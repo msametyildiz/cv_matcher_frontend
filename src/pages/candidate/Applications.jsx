@@ -4,7 +4,6 @@ import {
   Briefcase, Search, Filter, ChevronDown, ArrowRight,
   Clock, CheckCircle, XCircle, CalendarClock, Building
 } from 'lucide-react';
-import api from '../../api';
 import Loader from '../../components/common/Loader';
 import ErrorMessage from '../../components/common/ErrorMessage';
 

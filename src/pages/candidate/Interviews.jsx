@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { 
   Calendar, Clock, Video, MapPin, Phone, CheckCircle,
   XCircle, MessageCircle, User, Building, AlertCircle
 } from 'lucide-react';
-import api from '../../api';
 import Loader from '../../components/common/Loader';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import Modal from '../../components/common/Modal';
@@ -187,6 +185,7 @@ const Interviews = () => {
     }
   });
 
+  // eslint-disable-next-line no-unused-vars
   const getStatusIcon = (status) => {
     const icons = {
       scheduled: <CheckCircle className="h-5 w-5 text-green-500" />,

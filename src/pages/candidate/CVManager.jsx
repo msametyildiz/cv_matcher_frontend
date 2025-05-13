@@ -4,7 +4,6 @@ import {
   FileText, Upload, Download, Trash2, Check, Eye, 
   AlertCircle, Calendar, Star, Pencil
 } from 'lucide-react';
-import api from '../../api';
 import Loader from '../../components/common/Loader';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import CVUpload from '../../components/candidate/CVUpload';

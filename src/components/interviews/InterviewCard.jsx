@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, Clock, Video, MapPin, User, Briefcase, Edit, Trash2, Check, X } from 'lucide-react';
+import { Calendar, Clock, Video, MapPin, User, Briefcase, Edit, Check, X } from 'lucide-react'; // Remove Trash2
 
 const InterviewCard = ({ 
   interview, 

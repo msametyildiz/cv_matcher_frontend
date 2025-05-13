@@ -13,11 +13,9 @@ import {
   X
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
-import Navbar from './Navbar';
-import Footer from './Footer';
 
 const MainLayout = ({ children }) => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   

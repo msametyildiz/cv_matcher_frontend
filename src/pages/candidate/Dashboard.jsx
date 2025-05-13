@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
-  Briefcase, Users, Calendar, Clock, Plus, BarChart2
+  Briefcase, Users, Clock, Plus, BarChart2
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import Loader from '../../components/common/Loader';

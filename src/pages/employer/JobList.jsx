@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Search, Filter, ChevronDown, Briefcase, Clock, Edit, Trash2, Eye } from 'lucide-react';
+import { Plus, Search, ChevronDown, Briefcase, Clock, Edit, Trash2, Eye } from 'lucide-react';
 import { toast } from 'react-hot-toast';
-import api from '../../api';
 import Loader from '../../components/common/Loader';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import Modal from '../../components/common/Modal';

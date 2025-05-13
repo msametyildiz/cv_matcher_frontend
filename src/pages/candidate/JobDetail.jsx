@@ -2,11 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { 
   Briefcase, MapPin, Calendar, DollarSign, Clock, Building, 
-  Globe, Share2, ChevronLeft, FileText, Bookmark, Flag, ArrowLeft
+  Globe, Share2, FileText, Bookmark, Flag, ArrowLeft
 } from 'lucide-react';
+// Remove ChevronLeft
 import { useApi } from '../../hooks/useApi';
 import { useAuth } from '../../hooks/useAuth';
 import { useNotification } from '../../contexts/NotificationContext';
+// Import toast only if you're actually using it
+import { User, AlertCircle } from 'lucide-react';
 import Loader from '../../components/common/Loader';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import Modal from '../../components/common/Modal';
@@ -14,6 +17,7 @@ import Modal from '../../components/common/Modal';
 const JobDetail = () => {
   const { jobId } = useParams();
   const navigate = useNavigate();
+  // eslint-disable-next-line no-unused-vars
   const { user } = useAuth();
   const { success, error: showError } = useNotification();
   
@@ -41,8 +45,8 @@ const JobDetail = () => {
   // Set up mock data for development
   useEffect(() => {
     if (!job && !loading && !error) {
-      // Mock job data
-      const mockJob = {
+      // eslint-disable-next-line no-unused-vars
+      const mockJobData = {
         id: parseInt(jobId),
         title: 'Senior Full Stack Developer',
         company: 'Tech Innovations Inc.',
@@ -128,7 +132,7 @@ const JobDetail = () => {
       }, 300);
     }
   }, [job, loading, error, jobId]);
-
+  
   // Format date for display
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString(undefined, {
@@ -169,7 +173,7 @@ const JobDetail = () => {
   // Handle job application
   const handleApply = async () => {
     if (!selectedCV) {
-      toast.error('Please select a CV to apply with');
+      showError('Please select a CV to apply with');
       return;
     }
     
@@ -178,10 +182,10 @@ const JobDetail = () => {
     try {
       // In real app: await api.job.applyToJob(jobId, selectedCV, applicationNote);
       await new Promise(resolve => setTimeout(resolve, 1000));
-      toast.success('Application submitted successfully!');
+      success('Application submitted successfully!');
       setShowApplyModal(false);
     } catch (err) {
-      toast.error('Failed to submit application. Please try again.');
+      showError('Failed to submit application. Please try again.');
       console.error('Application error:', err);
     } finally {
       setIsSubmitting(false);
@@ -193,10 +197,10 @@ const JobDetail = () => {
     try {
       setIsBookmarked(!isBookmarked);
       // In real app: await api.job.toggleBookmark(jobId);
-      toast.success(isBookmarked ? 'Job removed from bookmarks' : 'Job added to bookmarks');
+      success(isBookmarked ? 'Job removed from bookmarks' : 'Job added to bookmarks');
     } catch (err) {
       setIsBookmarked(!isBookmarked); // Revert on failure
-      toast.error('Failed to update bookmark status');
+      showError('Failed to update bookmark status');
     }
   };
 
@@ -211,14 +215,14 @@ const JobDetail = () => {
     } else {
       // Fallback - copy to clipboard
       navigator.clipboard.writeText(window.location.href);
-      toast.success('Link copied to clipboard');
+      success('Link copied to clipboard');
     }
   };
 
   // Handle report job
   const handleReport = () => {
     // Implementation for reporting inappropriate job listings
-    toast.success('Thank you for your report. We will review this listing.');
+    success('Thank you for your report. We will review this listing.');
   };
 
   return (
@@ -618,7 +622,7 @@ const JobDetail = () => {
             )}
           </div>
           
-          {/* Cover Letter / Note */}
+          {/* Additional Note */}
           <div className="mb-6">
             <label htmlFor="applicationNote" className="block text-sm font-medium text-gray-700 mb-2">
               Additional Note (Optional)

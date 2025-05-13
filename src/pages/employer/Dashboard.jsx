@@ -4,13 +4,11 @@ import {
   Plus, 
   Briefcase, 
   Users, 
-  Calendar, 
   BarChart2,
   Clock
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useAuth } from '../../hooks/useAuth';
-import api from '../../api';
 import Loader from '../../components/common/Loader';
 import ErrorMessage from '../../components/common/ErrorMessage';
 

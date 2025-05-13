@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Routes, Route, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from './hooks/useAuth';
 
 // Layouts

@@ -1,14 +1,15 @@
 import React from 'react';
+import { BrowserRouter as Router } from 'react-router-dom';
 import AppRoutes from './routes';
-import './styles/index.css';
-import { Toaster } from 'react-hot-toast';
+import { ToastContainer } from './utils/toast';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
-    <>
-      <Toaster position="top-right" />
+    <Router>
+      <ToastContainer position="top-right" autoClose={3000} />
       <AppRoutes />
-    </>
+    </Router>
   );
 }
 

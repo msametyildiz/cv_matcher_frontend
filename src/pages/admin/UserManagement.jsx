@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Search, Filter, RefreshCw, Trash2, Edit, User, UserPlus, 
+  Search, RefreshCw, Trash2, Edit, User, UserPlus, 
   ChevronsUpDown, ChevronUp, ChevronDown, ShieldCheck, 
-  CheckCircle, AlertCircle, Clock, Check, X
+  CheckCircle, AlertCircle, Clock, Check, X, Briefcase
 } from 'lucide-react';
 import { useApi } from '../../hooks/useApi';
 import { useDebounce } from '../../hooks/useDebounce';

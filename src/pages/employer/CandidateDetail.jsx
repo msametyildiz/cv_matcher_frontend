@@ -1,13 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import React /* , { useEffect } */ from 'react';
+import { useParams, useNavigate /* , Link */ } from 'react-router-dom';
 import { 
-  User, Mail, Phone, MapPin, Globe, FileText, Download,
-  Calendar, Clock, Star, ArrowLeft, Briefcase, GraduationCap
+  // User,
+  // Phone, 
+  // MapPin,
+  // Globe,
+  Mail, 
+  // Download,
+  Calendar, 
+  // Clock,
+  // Star,
+  // ArrowLeft,
+  Briefcase, 
+  GraduationCap,
+  FileText
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import Loader from '../../components/common/Loader';
 import ErrorMessage from '../../components/common/ErrorMessage';
-import Modal from '../../components/common/Modal';
 import ProfileHeader from '../../components/candidates/ProfileHeader';
 import ContactInfo from '../../components/candidates/ContactInfo';
 import CandidateCV from '../../components/candidates/CandidateCV';
@@ -15,6 +25,17 @@ import ExperienceItem from '../../components/candidates/ExperienceItem';
 import MatchingJobItem from '../../components/candidates/MatchingJobItem';
 import useCandidateData from '../../hooks/useCandidateData';
 import { formatDate, formatDateRange, getTimeSinceLastActive } from '../../utils/dateUtils';
+import { Card } from '../../components/ui/Card';
+import { BackButton } from '../../components/common/BackButton';
+import { NotFoundMessage } from '../../components/common/NotFoundMessage';
+import { LinkItem } from '../../components/common/LinkItem';
+import { AboutSection } from '../../components/profile/AboutSection';
+import { SkillsSection } from '../../components/profile/SkillsSection';
+import { LanguageItem } from '../../components/profile/LanguageItem';
+import { ProgressBar } from '../../components/ui/ProgressBar';
+import { EmptyState } from '../../components/common/EmptyState';
+import { ContactModal } from '../../components/modals/ContactModal';
+import { ScheduleModal } from '../../components/modals/ScheduleModal';
 
 const CandidateDetail = () => {
   const { candidateId } = useParams();
@@ -30,10 +51,10 @@ const CandidateDetail = () => {
   } = useCandidateData(candidateId);
   
   // Modal states
-  const [showContactModal, setShowContactModal] = useState(false);
-  const [showScheduleModal, setShowScheduleModal] = useState(false);
-  const [messageForm, setMessageForm] = useState({ subject: '', message: '' });
-  const [interviewForm, setInterviewForm] = useState({
+  const [showContactModal, setShowContactModal] = React.useState(false);
+  const [showScheduleModal, setShowScheduleModal] = React.useState(false);
+  const [messageForm, setMessageForm] = React.useState({ subject: '', message: '' });
+  const [interviewForm, setInterviewForm] = React.useState({
     jobId: '',
     date: '',
     time: '',
@@ -42,7 +63,7 @@ const CandidateDetail = () => {
     location: '',
     notes: ''
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
   
   // Form handlers
   const handleContact = async (e) => {

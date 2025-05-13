@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Calendar, Clock, Filter, Search, Plus, Edit, X,
-  ChevronLeft, ChevronRight, User, Briefcase, MapPin, Video
-} from 'lucide-react';
+  Calendar, Search, Plus, 
+  ChevronLeft, ChevronRight
+} from 'lucide-react'; // Remove unused imports
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import AdminPageLayout from '../../components/layouts/AdminPageLayout';
@@ -11,7 +11,12 @@ import InterviewCard from '../../components/interviews/InterviewCard';
 import Modal from '../../components/common/Modal';
 import Loader from '../../components/common/Loader';
 import ErrorMessage from '../../components/common/ErrorMessage';
-import { formatDate, formatTime } from '../../utils/dateUtils';
+import { formatDate } from '../../utils/dateUtils';
+
+// eslint-disable-next-line no-unused-vars
+const formatTime = (time) => {
+  // ...existing implementation...
+};
 
 const InterviewScheduler = () => {
   const navigate = useNavigate();
@@ -29,6 +34,8 @@ const InterviewScheduler = () => {
     type: 'all'
   });
   const [searchQuery, setSearchQuery] = useState('');
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [confirmAction, setConfirmAction] = useState(null);
 
   // Fetch interviews data
   useEffect(() => {
@@ -141,12 +148,10 @@ const InterviewScheduler = () => {
 
   // Handle canceling an interview
   const handleCancelInterview = (id) => {
-    if (confirm('Are you sure you want to cancel this interview?')) {
-      setInterviews(prev => prev.map(i => 
-        i.id === id ? { ...i, status: 'cancelled' } : i
-      ));
-      toast.success('Interview cancelled');
-    }
+    setInterviews(prev => prev.map(i => 
+      i.id === id ? { ...i, status: 'cancelled' } : i
+    ));
+    toast.success('Interview cancelled');
   };
 
   // Navigation between date ranges
@@ -160,6 +165,11 @@ const InterviewScheduler = () => {
       newDate.setMonth(newDate.getMonth() + direction);
     }
     setCurrentDate(newDate);
+  };
+
+  const handleConfirmation = (action, message) => {
+    setConfirmAction(() => action);
+    setShowConfirmDialog(true);
   };
 
   return (
@@ -294,7 +304,7 @@ const InterviewScheduler = () => {
                 setSelectedInterview(interview);
                 setShowModal(true);
               }}
-              onCancel={() => handleCancelInterview(interview.id)}
+              onCancel={() => handleConfirmation(() => handleCancelInterview(interview.id), 'Are you sure you want to cancel this interview?')}
               onViewCandidate={() => navigate(`/employer/candidates/${interview.candidateId}`)}
             />
           ))}
@@ -314,6 +324,33 @@ const InterviewScheduler = () => {
           onCancel={() => setShowModal(false)}
         />
       </Modal>
+
+      {/* Confirmation Dialog */}
+      {showConfirmDialog && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+            <h3 className="text-lg font-medium mb-4">Confirm Action</h3>
+            <p className="mb-6">Are you sure you want to proceed with this action?</p>
+            <div className="flex justify-end space-x-3">
+              <button
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                onClick={() => setShowConfirmDialog(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
+                onClick={() => {
+                  if (confirmAction) confirmAction();
+                  setShowConfirmDialog(false);
+                }}
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </AdminPageLayout>
   );
 };

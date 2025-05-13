@@ -1,5 +1,5 @@
 import { useContext, useEffect } from 'react';
-import { AuthContext, useAuth as useAuthContext } from '../contexts/AuthContext';
+import { AuthContext } from '../contexts/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 export const useAuth = () => {

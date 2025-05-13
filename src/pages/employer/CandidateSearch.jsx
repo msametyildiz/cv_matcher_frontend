@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React from 'react';
 import { Search, MapPin, Filter, ChevronDown, RefreshCw } from 'lucide-react';
 import Loader from '../../components/common/Loader';
 import ErrorMessage from '../../components/common/ErrorMessage';
@@ -24,7 +23,7 @@ const CandidateSearch = () => {
   
   const { 
     page, perPage, totalPages, totalCandidates,
-    setPagination, handlePageChange 
+    handlePageChange 
   } = usePagination(1, 10, 0);
   
   // Get search results

@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 
 const useSearchFilters = (initialFilters = {}) => {
   const [filters, setFilters] = useState(initialFilters);

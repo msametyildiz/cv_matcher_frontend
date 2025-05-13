@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-hot-toast';
 import { 
   User, Mail, Phone, MapPin, Globe, Briefcase, GraduationCap, 
   Plus, Minus, Edit, Save, X, Link as LinkIcon, FileText
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
-import api from '../../api';
 import Loader from '../../components/common/Loader';
 import ErrorMessage from '../../components/common/ErrorMessage';
 
@@ -35,11 +34,8 @@ const Profile = () => {
     links: []
   });
   
-  useEffect(() => {
-    fetchProfile();
-  }, []);
-  
-  const fetchProfile = async () => {
+  // Define fetchProfile with useCallback before using it in useEffect
+  const fetchProfile = useCallback(async () => {
     setLoading(true);
     setError(null);
     
@@ -119,7 +115,11 @@ const Profile = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]); // Add any dependencies needed
+  
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]); // Add fetchProfile to the dependency array
   
   const handleEdit = (section) => {
     setActiveSection(section);

@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from 'react';
-import useApi from './useApi';
 
 const useCandidateSearch = (initialFilters = {}, initialPage = 1, initialItemsPerPage = 10) => {
   const [candidates, setCandidates] = useState([]);
@@ -14,8 +13,6 @@ const useCandidateSearch = (initialFilters = {}, initialPage = 1, initialItemsPe
     sortBy: 'relevance',
     sortOrder: 'desc'
   });
-  
-  const api = useApi();
   
   // Search candidates based on current parameters
   const searchCandidates = useCallback(async () => {
@@ -107,7 +104,7 @@ const useCandidateSearch = (initialFilters = {}, initialPage = 1, initialItemsPe
         ...newFilters
       }
     });
-  }, [searchParams.filters, updateSearchParams]);
+  }, [updateSearchParams, searchParams.filters]); // Add searchParams.filters to dependency array
   
   // Update page
   const goToPage = useCallback((page) => {
@@ -122,6 +119,25 @@ const useCandidateSearch = (initialFilters = {}, initialPage = 1, initialItemsPe
     });
   }, [updateSearchParams]);
   
+  const handleLoadMore = useCallback(() => {
+    // Calculate if there are more items to load
+    const hasMore = searchParams.page * searchParams.itemsPerPage < totalItems;
+    
+    if (!loading && hasMore) {
+      updateSearchParams({
+        page: searchParams.page + 1
+      });
+    }
+  }, [loading, searchParams, totalItems, updateSearchParams]);
+  
+  const resetFilters = useCallback(() => {
+    setSearchParams({
+      ...searchParams,
+      filters: initialFilters,
+      page: 1
+    });
+  }, [initialFilters]); 
+  
   return {
     candidates,
     loading,
@@ -132,6 +148,8 @@ const useCandidateSearch = (initialFilters = {}, initialPage = 1, initialItemsPe
     updateFilters,
     goToPage,
     clearFilters,
+    handleLoadMore, // Add handleLoadMore to returned methods
+    resetFilters,   // Add resetFilters to returned methods
     refresh: searchCandidates
   };
 };

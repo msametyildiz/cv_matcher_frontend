@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Plus, Minus, AlertCircle } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import useForm from '../../hooks/useForm';
 import Loader from '../../components/common/Loader';
@@ -14,15 +13,14 @@ const EditJob = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [errors] = useState({});
   
   // Form handling with custom hook
   const { 
     formData, 
-    errors, 
     handleChange, 
     handleSubmit, 
     setFormData, 
-    setErrors,
     isSubmitting 
   } = useForm({
     initialValues: {

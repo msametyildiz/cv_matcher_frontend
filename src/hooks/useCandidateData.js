@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import useApi from './useApi';
 
 // Custom hook to fetch and manage candidate data
 const useCandidateData = (candidateId) => {
@@ -7,8 +6,6 @@ const useCandidateData = (candidateId) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [matchingJobs, setMatchingJobs] = useState([]);
-  
-  const api = useApi();
   
   // Fetch candidate data
   useEffect(() => {

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { Lock, Check, AlertCircle } from 'lucide-react';
-import api from '../../api';
 import Navbar from '../../components/common/Navbar';
 import Footer from '../../components/common/Footer';
 

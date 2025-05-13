@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  User, Mail, Bell, Lock, Shield, Trash2, 
-  Save, X, AlertTriangle, Eye, EyeOff
+  User, Bell, Lock, Shield, Trash2, 
+  Save, AlertTriangle, Eye, EyeOff
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useAuth } from '../../hooks/useAuth';
-import api from '../../api';
 import Loader from '../../components/common/Loader';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import Modal from '../../components/common/Modal';
