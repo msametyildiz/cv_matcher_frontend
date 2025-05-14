@@ -1,81 +1,108 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-// Export the AuthContext to fix the import error
-export const AuthContext = createContext();
+// Create the auth context
+const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+export function AuthProvider({ children }) {
+  const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    // Mock authentication check
-    // In a real app, you'd check localStorage or cookies for a token
-    // and then validate it with your backend
-    const checkAuth = async () => {
-      try {
-        // Simulate API call delay
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-          const user = JSON.parse(storedUser);
-          setUser(user);
-          setIsAuthenticated(true);
-        }
-      } catch (error) {
-        console.error('Authentication check failed:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkAuth();
-  }, []);
-
-  const login = async (credentials) => {
-    // Mock login - replace with actual API call
-    setIsLoading(true);
+  // Login function
+  const login = async (email, password) => {
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Mock successful login
-      const mockUser = {
-        id: '1',
-        name: 'Test User',
-        email: credentials.email,
-        role: 'candidate', // or 'employer' or 'admin'
-      };
-      
-      setUser(mockUser);
-      setIsAuthenticated(true);
-      localStorage.setItem('user', JSON.stringify(mockUser));
-      return { success: true };
-    } catch (error) {
-      return { success: false, error: error.message };
-    } finally {
-      setIsLoading(false);
+      // Replace with actual authentication logic
+      // Example: const response = await api.post('/auth/login', { email, password });
+      // setCurrentUser(response.data.user);
+      console.log('Login attempt with:', email, password);
+      setCurrentUser({ email }); // Temporary mock user
+      return true;
+    } catch (err) {
+      setError(err.message || 'Failed to login');
+      return false;
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    setIsAuthenticated(false);
-    localStorage.removeItem('user');
+  // Logout function
+  const logout = async () => {
+    try {
+      // Replace with actual logout logic
+      // Example: await api.post('/auth/logout');
+      setCurrentUser(null);
+      return true;
+    } catch (err) {
+      setError(err.message || 'Failed to logout');
+      return false;
+    }
+  };
+
+  // Register function
+  const register = async (userData) => {
+    try {
+      // Replace with actual registration logic
+      // Example: const response = await api.post('/auth/register', userData);
+      // setCurrentUser(response.data.user);
+      console.log('Register attempt with:', userData);
+      setCurrentUser({ email: userData.email }); // Temporary mock user
+      return true;
+    } catch (err) {
+      setError(err.message || 'Failed to register');
+      return false;
+    }
+  };
+
+  useEffect(() => {
+    // Check for existing user session
+    const checkAuthStatus = async () => {
+      try {
+        // Replace with actual auth check
+        // Example: const response = await api.get('/auth/me');
+        // if (response.data.user) setCurrentUser(response.data.user);
+        const savedUser = localStorage.getItem('user');
+        if (savedUser) {
+          setCurrentUser(JSON.parse(savedUser));
+        }
+      } catch (err) {
+        console.error('Auth check failed:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkAuthStatus();
+  }, []);
+
+  // Save user to localStorage when it changes
+  useEffect(() => {
+    if (currentUser) {
+      localStorage.setItem('user', JSON.stringify(currentUser));
+    } else {
+      localStorage.removeItem('user');
+    }
+  }, [currentUser]);
+
+  const value = {
+    currentUser,
+    login,
+    logout,
+    register,
+    loading,
+    error,
+    setError
   };
 
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      isAuthenticated, 
-      isLoading, 
-      login, 
-      logout 
-    }}>
-      {children}
+    <AuthContext.Provider value={value}>
+      {!loading && children}
     </AuthContext.Provider>
   );
-};
+}
 
-export const useAuth = () => useContext(AuthContext);
+// Hook to use the auth context
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+}
