@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { setAuthToken, getAuthToken, removeAuthToken } from '../utils/storage';
 
 // Create the auth context
 const AuthContext = createContext();
@@ -7,28 +8,43 @@ export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // Login function
-  const login = async (email, password) => {
+  const login = async (credentials) => {
     try {
-      // Replace with actual authentication logic
-      // Example: const response = await api.post('/auth/login', { email, password });
-      // setCurrentUser(response.data.user);
-      console.log('Login attempt with:', email, password);
-      setCurrentUser({ email }); // Temporary mock user
-      return true;
+      // This would be replaced with actual API call in production
+      // const response = await api.auth.login(credentials);
+      
+      // Mock successful login for development
+      console.log('Login attempt with:', credentials);
+      const mockUser = { 
+        id: Date.now(),
+        email: credentials.email,
+        name: credentials.email.split('@')[0],
+        role: 'candidate'
+      };
+      const mockToken = 'mock-jwt-token-' + Date.now();
+      
+      // Set auth data
+      setAuthToken(mockToken);
+      setCurrentUser(mockUser);
+      setIsAuthenticated(true);
+      
+      return { success: true, user: mockUser };
     } catch (err) {
       setError(err.message || 'Failed to login');
-      return false;
+      return { success: false, error: err.message };
     }
   };
 
   // Logout function
   const logout = async () => {
     try {
-      // Replace with actual logout logic
-      // Example: await api.post('/auth/logout');
+      // This would call logout API in production
+      removeAuthToken();
       setCurrentUser(null);
+      setIsAuthenticated(false);
       return true;
     } catch (err) {
       setError(err.message || 'Failed to logout');
@@ -39,15 +55,28 @@ export function AuthProvider({ children }) {
   // Register function
   const register = async (userData) => {
     try {
-      // Replace with actual registration logic
-      // Example: const response = await api.post('/auth/register', userData);
-      // setCurrentUser(response.data.user);
+      // This would be replaced with actual API call in production
+      // const response = await api.auth.register(userData);
+      
+      // Mock successful registration for development
       console.log('Register attempt with:', userData);
-      setCurrentUser({ email: userData.email }); // Temporary mock user
-      return true;
+      const mockUser = { 
+        id: Date.now(),
+        email: userData.email,
+        name: userData.name,
+        role: userData.role || 'candidate'
+      };
+      const mockToken = 'mock-jwt-token-' + Date.now();
+      
+      // Set auth data
+      setAuthToken(mockToken);
+      setCurrentUser(mockUser);
+      setIsAuthenticated(true);
+      
+      return { success: true, user: mockUser };
     } catch (err) {
       setError(err.message || 'Failed to register');
-      return false;
+      return { success: false, error: err.message };
     }
   };
 
@@ -55,15 +84,17 @@ export function AuthProvider({ children }) {
     // Check for existing user session
     const checkAuthStatus = async () => {
       try {
-        // Replace with actual auth check
-        // Example: const response = await api.get('/auth/me');
-        // if (response.data.user) setCurrentUser(response.data.user);
+        const token = getAuthToken();
         const savedUser = localStorage.getItem('user');
-        if (savedUser) {
+        
+        if (token && savedUser) {
+          setAuthToken(token);
           setCurrentUser(JSON.parse(savedUser));
+          setIsAuthenticated(true);
         }
       } catch (err) {
         console.error('Auth check failed:', err);
+        removeAuthToken();
       } finally {
         setLoading(false);
       }
@@ -83,12 +114,14 @@ export function AuthProvider({ children }) {
 
   const value = {
     currentUser,
+    isAuthenticated,
     login,
     logout,
     register,
     loading,
     error,
-    setError
+    setError,
+    setUser: setCurrentUser
   };
 
   return (
