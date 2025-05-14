@@ -45,6 +45,7 @@ import CVManagement from './pages/admin/CVManagement';
 import Analytics from './pages/admin/Analytics';
 import SystemSettings from './pages/admin/Settings';
 
+// This component must be used inside Router context
 const ScrollToTop = () => {
   const { pathname } = useLocation();
   
@@ -54,6 +55,13 @@ const ScrollToTop = () => {
   
   return null;
 };
+
+const Home = () => (
+  <div className="p-8">
+    <h1 className="text-2xl font-bold">Welcome to CV Matcher</h1>
+    <p className="mt-4">This is a placeholder homepage. Your application is now running correctly!</p>
+  </div>
+);
 
 const AppRoutes = () => {
   return (
@@ -127,11 +135,11 @@ const ProtectedRoute = ({ children, role }) => {
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       navigate('/login', { state: { returnUrl: window.location.pathname } });
-    } else if (!isLoading && isAuthenticated && role && user.role !== role) {
+    } else if (!isLoading && isAuthenticated && role && user?.role !== role) {
       // If user doesn't have the required role, redirect to their appropriate dashboard
-      const dashboardPath = user.role === 'admin' 
+      const dashboardPath = user?.role === 'admin' 
         ? '/admin/dashboard'
-        : user.role === 'employer' 
+        : user?.role === 'employer' 
           ? '/employer/dashboard' 
           : '/candidate/dashboard';
       
@@ -153,7 +161,7 @@ const ProtectedRoute = ({ children, role }) => {
     return null;
   }
   
-  if (role && user.role !== role) {
+  if (role && user?.role !== role) {
     return null;
   }
   
@@ -163,28 +171,31 @@ const ProtectedRoute = ({ children, role }) => {
 // Helper component for redirecting to the appropriate dashboard
 const DashboardRedirect = () => {
   const { user, isAuthenticated, isLoading } = useAuth();
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    if (!isLoading) {
+      if (!isAuthenticated) {
+        navigate('/login', { replace: true });
+      } else {
+        const dashboardPath = user?.role === 'admin' 
+          ? '/admin/dashboard'
+          : user?.role === 'employer' 
+            ? '/employer/dashboard' 
+            : '/candidate/dashboard';
+        
+        navigate(dashboardPath, { replace: true });
+      }
+    }
+  }, [isAuthenticated, isLoading, user, navigate]);
   
   if (isLoading) {
-    // You could render a loading spinner here
     return <div className="min-h-screen flex items-center justify-center">
       <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
     </div>;
   }
   
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-  
-  switch (user.role) {
-    case 'candidate':
-      return <Navigate to="/candidate/dashboard" replace />;
-    case 'employer':
-      return <Navigate to="/employer/dashboard" replace />;
-    case 'admin':
-      return <Navigate to="/admin/dashboard" replace />;
-    default:
-      return <Navigate to="/" replace />;
-  }
+  return null;
 };
 
 export default AppRoutes;
