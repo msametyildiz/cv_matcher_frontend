@@ -23,12 +23,20 @@ const MainLayout = ({ children }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   const isActiveRoute = (route) => {
-    return location.pathname.startsWith(route);
+    return location.pathname === route;
   };
   
   const handleLogout = () => {
     logout();
     navigate('/login');
+  };
+  
+  const handleNavigation = (route) => {
+    navigate(route);
+    // Close mobile menu if open
+    if (isMobileMenuOpen) {
+      setIsMobileMenuOpen(false);
+    }
   };
   
   // Navigation links based on user role
@@ -38,29 +46,29 @@ const MainLayout = ({ children }) => {
     switch (user.role) {
       case 'candidate':
         return [
-          { to: '/candidate/dashboard', label: 'Dashboard', icon: <Home className="w-5 h-5" /> },
-          { to: '/candidate/jobs', label: 'Find Jobs', icon: <Search className="w-5 h-5" /> },
-          { to: '/candidate/applications', label: 'Applications', icon: <Briefcase className="w-5 h-5" /> },
-          { to: '/candidate/cv', label: 'My CVs', icon: <FileText className="w-5 h-5" /> },
-          { to: '/candidate/interviews', label: 'Interviews', icon: <Calendar className="w-5 h-5" /> },
-          { to: '/candidate/profile', label: 'Profile', icon: <User className="w-5 h-5" /> },
-          { to: '/candidate/settings', label: 'Settings', icon: <Settings className="w-5 h-5" /> }
+          { route: '/candidate/dashboard', label: 'Dashboard', icon: <Home className="w-5 h-5" /> },
+          { route: '/candidate/cv', label: 'My CV', icon: <FileText className="w-5 h-5" /> },
+          { route: '/candidate/jobs', label: 'Jobs', icon: <Search className="w-5 h-5" /> },
+          { route: '/candidate/applications', label: 'Applications', icon: <Briefcase className="w-5 h-5" /> },
+          { route: '/candidate/interviews', label: 'Interviews', icon: <Calendar className="w-5 h-5" /> },
+          { route: '/candidate/profile', label: 'Profile', icon: <User className="w-5 h-5" /> },
+          { route: '/candidate/settings', label: 'Settings', icon: <Settings className="w-5 h-5" /> }
         ];
       case 'employer':
         return [
-          { to: '/employer/dashboard', label: 'Dashboard', icon: <Home className="w-5 h-5" /> },
-          { to: '/employer/jobs', label: 'My Jobs', icon: <Briefcase className="w-5 h-5" /> },
-          { to: '/employer/candidates', label: 'Find Candidates', icon: <Search className="w-5 h-5" /> },
-          { to: '/employer/interviews', label: 'Interviews', icon: <Calendar className="w-5 h-5" /> },
-          { to: '/employer/settings', label: 'Settings', icon: <Settings className="w-5 h-5" /> }
+          { route: '/employer/dashboard', label: 'Dashboard', icon: <Home className="w-5 h-5" /> },
+          { route: '/employer/jobs', label: 'My Jobs', icon: <Briefcase className="w-5 h-5" /> },
+          { route: '/employer/candidates', label: 'Find Candidates', icon: <Search className="w-5 h-5" /> },
+          { route: '/employer/interviews', label: 'Interviews', icon: <Calendar className="w-5 h-5" /> },
+          { route: '/employer/settings', label: 'Settings', icon: <Settings className="w-5 h-5" /> }
         ];
       case 'admin':
         return [
-          { to: '/admin/dashboard', label: 'Dashboard', icon: <Home className="w-5 h-5" /> },
-          { to: '/admin/jobs', label: 'Jobs', icon: <Briefcase className="w-5 h-5" /> },
-          { to: '/admin/cv', label: 'CVs', icon: <FileText className="w-5 h-5" /> },
-          { to: '/admin/users', label: 'Users', icon: <User className="w-5 h-5" /> },
-          { to: '/admin/settings', label: 'Settings', icon: <Settings className="w-5 h-5" /> }
+          { route: '/admin/dashboard', label: 'Dashboard', icon: <Home className="w-5 h-5" /> },
+          { route: '/admin/jobs', label: 'Jobs', icon: <Briefcase className="w-5 h-5" /> },
+          { route: '/admin/cv', label: 'CVs', icon: <FileText className="w-5 h-5" /> },
+          { route: '/admin/users', label: 'Users', icon: <User className="w-5 h-5" /> },
+          { route: '/admin/settings', label: 'Settings', icon: <Settings className="w-5 h-5" /> }
         ];
       default:
         return [];
@@ -81,18 +89,18 @@ const MainLayout = ({ children }) => {
           <div className="flex-1 flex flex-col overflow-y-auto">
             <nav className="flex-1 px-2 py-4 space-y-1">
               {navLinks.map(link => (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  className={`flex items-center px-4 py-2 text-sm font-medium rounded-md ${
-                    isActiveRoute(link.to)
+                <button
+                  key={link.route}
+                  onClick={() => handleNavigation(link.route)}
+                  className={`flex items-center w-full px-4 py-2 text-sm font-medium rounded-md ${
+                    isActiveRoute(link.route)
                       ? 'bg-blue-50 text-blue-700'
                       : 'text-gray-700 hover:bg-gray-100'
                   }`}
                 >
                   <span className="mr-3">{link.icon}</span>
                   {link.label}
-                </Link>
+                </button>
               ))}
             </nav>
           </div>
@@ -122,7 +130,7 @@ const MainLayout = ({ children }) => {
       </div>
       
       {/* Mobile menu */}
-      <div className="md:hidden fixed inset-0 z-40 flex" style={{ display: isMobileMenuOpen ? 'flex' : 'none' }}>
+      <div className={`md:hidden fixed inset-0 z-40 flex ${isMobileMenuOpen ? 'block' : 'hidden'}`}>
         {/* Backdrop */}
         <div 
           className="fixed inset-0 bg-gray-600 bg-opacity-75" 
@@ -147,19 +155,18 @@ const MainLayout = ({ children }) => {
           <div className="mt-5 flex-1 h-0 overflow-y-auto">
             <nav className="px-2 space-y-1">
               {navLinks.map(link => (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  className={`flex items-center px-4 py-2 text-base font-medium rounded-md ${
-                    isActiveRoute(link.to)
+                <button
+                  key={link.route}
+                  onClick={() => handleNavigation(link.route)}
+                  className={`flex items-center w-full px-4 py-2 text-base font-medium rounded-md ${
+                    isActiveRoute(link.route)
                       ? 'bg-blue-50 text-blue-700'
                       : 'text-gray-700 hover:bg-gray-100'
                   }`}
-                  onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <span className="mr-3">{link.icon}</span>
                   {link.label}
-                </Link>
+                </button>
               ))}
             </nav>
           </div>
@@ -201,7 +208,7 @@ const MainLayout = ({ children }) => {
           <div className="flex-1 px-4 flex justify-between">
             <div className="flex-1 flex items-center">
               <h1 className="text-lg font-semibold text-gray-900">
-                {navLinks.find(link => isActiveRoute(link.to))?.label || 'Dashboard'}
+                {navLinks.find(link => isActiveRoute(link.route))?.label || 'Dashboard'}
               </h1>
             </div>
             <div className="ml-4 flex items-center md:ml-6">
