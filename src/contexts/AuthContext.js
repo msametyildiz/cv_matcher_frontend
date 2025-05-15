@@ -1,141 +1,241 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { setAuthToken, getAuthToken, removeAuthToken } from '../utils/storage';
+// src/contexts/AuthContext.js
+import React, { createContext, useState, useEffect } from 'react';
+import axios from 'axios';
 
-// Create the auth context
-const AuthContext = createContext();
+export const AuthContext = createContext(null);
 
-export function AuthProvider({ children }) {
-  const [currentUser, setCurrentUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Check if the user is already logged in
+  useEffect(() => {
+    const checkAuth = async () => {
+      setIsLoading(true);
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        setIsLoading(false);
+        return;
+      }
+      
+      try {
+        // In a real app, verify the token with the server
+        // const response = await axios.get('/api/auth/me', {
+        //   headers: { Authorization: `Bearer ${token}` }
+        // });
+        
+        // For development, parse the token to get user info
+        // WARNING: In production, ALWAYS verify the token server-side
+        const tokenParts = token.split('.');
+        if (tokenParts.length === 3) {
+          const payload = JSON.parse(atob(tokenParts[1]));
+          if (payload.exp > Date.now() / 1000) {
+            setUser(payload.user);
+            setIsAuthenticated(true);
+          } else {
+            // Token expired
+            localStorage.removeItem('token');
+          }
+        }
+      } catch (err) {
+        console.error('Auth check error:', err);
+        localStorage.removeItem('token');
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    checkAuth();
+  }, []);
 
   // Login function
   const login = async (credentials) => {
+    setIsLoading(true);
+    setError(null);
+    
     try {
-      // This would be replaced with actual API call in production
-      // const response = await api.auth.login(credentials);
+      // In a real app, send credentials to your backend
+      // const response = await axios.post('/api/auth/login', credentials);
       
-      // Mock successful login for development
-      console.log('Login attempt with:', credentials);
-      const mockUser = { 
-        id: Date.now(),
-        email: credentials.email,
-        name: credentials.email.split('@')[0],
-        role: 'candidate'
+      // For development/demo purposes
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Mock response based on credentials
+      let mockUser = null;
+      if (credentials.email === 'candidate@example.com') {
+        mockUser = { id: 1, name: 'John Candidate', email: credentials.email, role: 'candidate' };
+      } else if (credentials.email === 'employer@example.com') {
+        mockUser = { id: 2, name: 'Jane Employer', email: credentials.email, role: 'employer' };
+      } else if (credentials.email === 'admin@example.com') {
+        mockUser = { id: 3, name: 'Admin User', email: credentials.email, role: 'admin' };
+      } else {
+        // Default to candidate
+        mockUser = { id: 4, name: 'Default User', email: credentials.email, role: 'candidate' };
+      }
+      
+      // Create token payload
+      const payload = {
+        user: mockUser,
+        exp: Math.floor(Date.now() / 1000) + (60 * 60) // 1 hour expiration
       };
-      const mockToken = 'mock-jwt-token-' + Date.now();
       
-      // Set auth data
-      setAuthToken(mockToken);
-      setCurrentUser(mockUser);
+      // Create mock JWT (NOT SECURE - for demo only!)
+      const mockToken = [
+        btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' })),
+        btoa(JSON.stringify(payload)),
+        'signature'
+      ].join('.');
+      
+      // Save to localStorage
+      localStorage.setItem('token', mockToken);
+      
+      setUser(mockUser);
       setIsAuthenticated(true);
       
-      return { success: true, user: mockUser };
+      return mockUser;
     } catch (err) {
+      console.error('Login error:', err);
       setError(err.message || 'Failed to login');
-      return { success: false, error: err.message };
-    }
-  };
-
-  // Logout function
-  const logout = async () => {
-    try {
-      // This would call logout API in production
-      removeAuthToken();
-      setCurrentUser(null);
-      setIsAuthenticated(false);
-      return true;
-    } catch (err) {
-      setError(err.message || 'Failed to logout');
-      return false;
+      throw err;
+    } finally {
+      setIsLoading(false);
     }
   };
 
   // Register function
   const register = async (userData) => {
+    setIsLoading(true);
+    setError(null);
+    
     try {
-      // This would be replaced with actual API call in production
-      // const response = await api.auth.register(userData);
+      // In a real app, send user data to your backend
+      // const response = await axios.post('/api/auth/register', userData);
       
-      // Mock successful registration for development
-      console.log('Register attempt with:', userData);
-      const mockUser = { 
-        id: Date.now(),
-        email: userData.email,
+      // For development/demo purposes
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Create user with provided data
+      const mockUser = {
+        id: Math.floor(Math.random() * 1000),
         name: userData.name,
+        email: userData.email,
         role: userData.role || 'candidate'
       };
-      const mockToken = 'mock-jwt-token-' + Date.now();
       
-      // Set auth data
-      setAuthToken(mockToken);
-      setCurrentUser(mockUser);
+      // Create token payload
+      const payload = {
+        user: mockUser,
+        exp: Math.floor(Date.now() / 1000) + (60 * 60) // 1 hour expiration
+      };
+      
+      // Create mock JWT (NOT SECURE - for demo only!)
+      const mockToken = [
+        btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' })),
+        btoa(JSON.stringify(payload)),
+        'signature'
+      ].join('.');
+      
+      // Save to localStorage
+      localStorage.setItem('token', mockToken);
+      
+      setUser(mockUser);
       setIsAuthenticated(true);
       
-      return { success: true, user: mockUser };
+      return mockUser;
     } catch (err) {
+      console.error('Registration error:', err);
       setError(err.message || 'Failed to register');
-      return { success: false, error: err.message };
+      throw err;
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  useEffect(() => {
-    // Check for existing user session
-    const checkAuthStatus = async () => {
-      try {
-        const token = getAuthToken();
-        const savedUser = localStorage.getItem('user');
-        
-        if (token && savedUser) {
-          setAuthToken(token);
-          setCurrentUser(JSON.parse(savedUser));
-          setIsAuthenticated(true);
+  // Logout function
+  const logout = () => {
+    localStorage.removeItem('token');
+    setUser(null);
+    setIsAuthenticated(false);
+  };
+
+  // Update profile
+  const updateProfile = async (userData) => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      // In a real app, send update to your backend
+      // const response = await axios.put('/api/auth/profile', userData, {
+      //   headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      // });
+      
+      // For development/demo purposes
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Update local user state
+      const updatedUser = { ...user, ...userData };
+      
+      // Update token with new user data
+      const token = localStorage.getItem('token');
+      
+      if (token) {
+        const tokenParts = token.split('.');
+        if (tokenParts.length === 3) {
+          const payload = JSON.parse(atob(tokenParts[1]));
+          payload.user = updatedUser;
+          
+          const newToken = [
+            tokenParts[0],
+            btoa(JSON.stringify(payload)),
+            tokenParts[2]
+          ].join('.');
+          
+          localStorage.setItem('token', newToken);
         }
-      } catch (err) {
-        console.error('Auth check failed:', err);
-        removeAuthToken();
-      } finally {
-        setLoading(false);
       }
-    };
-
-    checkAuthStatus();
-  }, []);
-
-  // Save user to localStorage when it changes
-  useEffect(() => {
-    if (currentUser) {
-      localStorage.setItem('user', JSON.stringify(currentUser));
-    } else {
-      localStorage.removeItem('user');
+      
+      setUser(updatedUser);
+      
+      return updatedUser;
+    } catch (err) {
+      console.error('Profile update error:', err);
+      setError(err.message || 'Failed to update profile');
+      throw err;
+    } finally {
+      setIsLoading(false);
     }
-  }, [currentUser]);
+  };
 
+  // Auth context value
   const value = {
-    currentUser,
+    user,
     isAuthenticated,
-    login,
-    logout,
-    register,
-    loading,
+    isLoading,
     error,
-    setError,
-    setUser: setCurrentUser
+    login,
+    register,
+    logout,
+    updateProfile
   };
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
-}
+};
 
-// Hook to use the auth context
-export function useAuth() {
-  const context = useContext(AuthContext);
+// Custom hook to use the auth context
+export const useAuth = () => {
+  const context = React.useContext(AuthContext);
+  
   if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
+  
   return context;
-}
+};
