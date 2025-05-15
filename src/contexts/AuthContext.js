@@ -32,17 +32,17 @@ export const AuthProvider = ({ children }) => {
         const tokenParts = token.split('.');
         if (tokenParts.length === 3) {
           try {
-            const payload = JSON.parse(atob(tokenParts[1]));
+          const payload = JSON.parse(atob(tokenParts[1]));
             if (payload.exp && payload.user && payload.exp > Date.now() / 1000) {
-              setUser(payload.user);
+            setUser(payload.user);
               
               // Ensure role is explicitly set in localStorage for easy access
               if (payload.user.role) {
                 localStorage.setItem('userRole', payload.user.role);
               }
               
-              setIsAuthenticated(true);
-            } else {
+            setIsAuthenticated(true);
+          } else {
               // Token expired or invalid structure
               console.warn("Token expired or invalid structure");
               localStorage.removeItem('token');
@@ -225,16 +225,16 @@ export const AuthProvider = ({ children }) => {
         const tokenParts = token.split('.');
         if (tokenParts.length === 3) {
           try {
-            const payload = JSON.parse(atob(tokenParts[1]));
-            payload.user = updatedUser;
-            
-            const newToken = [
-              tokenParts[0],
-              btoa(JSON.stringify(payload)),
-              tokenParts[2]
-            ].join('.');
-            
-            localStorage.setItem('token', newToken);
+          const payload = JSON.parse(atob(tokenParts[1]));
+          payload.user = updatedUser;
+          
+          const newToken = [
+            tokenParts[0],
+            btoa(JSON.stringify(payload)),
+            tokenParts[2]
+          ].join('.');
+          
+          localStorage.setItem('token', newToken);
             
             // Ensure role is updated in localStorage too
             if (updatedUser.role) {

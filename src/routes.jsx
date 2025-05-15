@@ -150,20 +150,20 @@ const ProtectedRoute = ({ children, role }) => {
         });
       } else if (role && user?.role !== role) {
         console.log(`User role (${user?.role}) not allowed. Required role: ${role}`);
-        // If user doesn't have the required role, redirect to their appropriate dashboard
-        const dashboardPath = user?.role === 'admin' 
-          ? '/admin/dashboard'
-          : user?.role === 'employer' 
-            ? '/employer/dashboard' 
-            : '/candidate/dashboard';
-        
-        navigate(dashboardPath, { 
-          state: { 
-            message: `You don't have permission to access this page. You've been redirected to your dashboard.` 
+      // If user doesn't have the required role, redirect to their appropriate dashboard
+      const dashboardPath = user?.role === 'admin' 
+        ? '/admin/dashboard'
+        : user?.role === 'employer' 
+          ? '/employer/dashboard' 
+          : '/candidate/dashboard';
+      
+      navigate(dashboardPath, { 
+        state: { 
+          message: `You don't have permission to access this page. You've been redirected to your dashboard.` 
           },
           replace: true 
         });
-      }
+        } 
     }
   }, [isAuthenticated, isLoading, role, user, navigate, location]);
   

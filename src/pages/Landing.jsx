@@ -108,8 +108,8 @@ const Landing = () => {
                     Create Account
                   </Link>
                 </div>
-              </div>
-              
+          </div>
+          
               {/* Employers */}
               <div className="bg-white p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow">
                 <div className="h-16 w-16 mx-auto rounded-full bg-green-100 flex items-center justify-center mb-6">
@@ -142,7 +142,7 @@ const Landing = () => {
                   </Link>
                   <Link to="/employer-register" className="inline-flex justify-center items-center px-5 py-2 border border-gray-300 text-base font-medium rounded-md text-green-700 bg-white hover:bg-gray-50">
                     Create Account
-                  </Link>
+            </Link>
                 </div>
               </div>
             </div>

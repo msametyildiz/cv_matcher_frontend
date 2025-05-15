@@ -56,8 +56,8 @@ const Navbar = () => {
                 <button
                   onClick={handleToggleLoginMenu}
                   className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none flex items-center"
-                >
-                  Log in
+              >
+                Log in
                   <svg className="ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
@@ -77,8 +77,8 @@ const Navbar = () => {
                           <span className="block font-medium">Job Seeker</span>
                           <span className="block text-xs text-gray-500">Find jobs & opportunities</span>
                         </div>
-                      </Link>
-                      <Link 
+              </Link>
+              <Link
                         to="/employer-login" 
                         className="px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 flex items-center"
                         onClick={() => setIsLoginMenuOpen(false)}
@@ -98,8 +98,8 @@ const Navbar = () => {
                 <button
                   onClick={handleToggleRegisterMenu}
                   className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none flex items-center"
-                >
-                  Sign up
+              >
+                Sign up
                   <svg className="ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
@@ -130,7 +130,7 @@ const Navbar = () => {
                           <span className="block font-medium">Employer</span>
                           <span className="block text-xs text-gray-500">Create a company account</span>
                         </div>
-                      </Link>
+              </Link>
                     </div>
                   </div>
                 )}
