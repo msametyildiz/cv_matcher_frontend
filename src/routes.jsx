@@ -56,13 +56,6 @@ const ScrollToTop = () => {
   return null;
 };
 
-const Home = () => (
-  <div className="p-8">
-    <h1 className="text-2xl font-bold">Welcome to CV Matcher</h1>
-    <p className="mt-4">This is a placeholder homepage. Your application is now running correctly!</p>
-  </div>
-);
-
 const AppRoutes = () => {
   return (
     <>
@@ -80,41 +73,41 @@ const AppRoutes = () => {
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         
         {/* Protected routes - Candidate */}
-        <Route path="/candidate" element={<ProtectedRoute role="candidate"><MainLayout /></ProtectedRoute>}>
+        <Route path="/candidate" element={<MainLayout />}>
           <Route index element={<Navigate to="/candidate/dashboard" replace />} />
-          <Route path="dashboard" element={<CandidateDashboard />} />
-          <Route path="profile" element={<CandidateProfile />} />
-          <Route path="cv" element={<CVManager />} />
-          <Route path="jobs" element={<JobSearch />} />
-          <Route path="jobs/:jobId" element={<JobDetail />} />
-          <Route path="applications" element={<Applications />} />
-          <Route path="interviews" element={<Interviews />} />
-          <Route path="settings" element={<CandidateSettings />} />
+          <Route path="dashboard" element={<ProtectedRoute role="candidate"><CandidateDashboard /></ProtectedRoute>} />
+          <Route path="profile" element={<ProtectedRoute role="candidate"><CandidateProfile /></ProtectedRoute>} />
+          <Route path="cv" element={<ProtectedRoute role="candidate"><CVManager /></ProtectedRoute>} />
+          <Route path="jobs" element={<ProtectedRoute role="candidate"><JobSearch /></ProtectedRoute>} />
+          <Route path="jobs/:jobId" element={<ProtectedRoute role="candidate"><JobDetail /></ProtectedRoute>} />
+          <Route path="applications" element={<ProtectedRoute role="candidate"><Applications /></ProtectedRoute>} />
+          <Route path="interviews" element={<ProtectedRoute role="candidate"><Interviews /></ProtectedRoute>} />
+          <Route path="settings" element={<ProtectedRoute role="candidate"><CandidateSettings /></ProtectedRoute>} />
         </Route>
         
         {/* Protected routes - Employer */}
-        <Route path="/employer" element={<ProtectedRoute role="employer"><MainLayout /></ProtectedRoute>}>
+        <Route path="/employer" element={<MainLayout />}>
           <Route index element={<Navigate to="/employer/dashboard" replace />} />
-          <Route path="dashboard" element={<EmployerDashboard />} />
-          <Route path="jobs" element={<JobList />} />
-          <Route path="jobs/create" element={<CreateJob />} />
-          <Route path="jobs/:jobId" element={<JobDetailEmployer />} />
-          <Route path="jobs/:jobId/edit" element={<EditJob />} />
-          <Route path="candidates" element={<CandidateSearch />} />
-          <Route path="candidates/:candidateId" element={<CandidateDetail />} />
-          <Route path="interviews" element={<InterviewScheduler />} />
-          <Route path="settings" element={<EmployerSettings />} />
+          <Route path="dashboard" element={<ProtectedRoute role="employer"><EmployerDashboard /></ProtectedRoute>} />
+          <Route path="jobs" element={<ProtectedRoute role="employer"><JobList /></ProtectedRoute>} />
+          <Route path="jobs/create" element={<ProtectedRoute role="employer"><CreateJob /></ProtectedRoute>} />
+          <Route path="jobs/:jobId" element={<ProtectedRoute role="employer"><JobDetailEmployer /></ProtectedRoute>} />
+          <Route path="jobs/:jobId/edit" element={<ProtectedRoute role="employer"><EditJob /></ProtectedRoute>} />
+          <Route path="candidates" element={<ProtectedRoute role="employer"><CandidateSearch /></ProtectedRoute>} />
+          <Route path="candidates/:candidateId" element={<ProtectedRoute role="employer"><CandidateDetail /></ProtectedRoute>} />
+          <Route path="interviews" element={<ProtectedRoute role="employer"><InterviewScheduler /></ProtectedRoute>} />
+          <Route path="settings" element={<ProtectedRoute role="employer"><EmployerSettings /></ProtectedRoute>} />
         </Route>
         
         {/* Protected routes - Admin */}
-        <Route path="/admin" element={<ProtectedRoute role="admin"><MainLayout /></ProtectedRoute>}>
+        <Route path="/admin" element={<MainLayout />}>
           <Route index element={<Navigate to="/admin/dashboard" replace />} />
-          <Route path="dashboard" element={<AdminDashboard />} />
-          <Route path="users" element={<UserManagement />} />
-          <Route path="jobs" element={<JobManagement />} />
-          <Route path="cvs" element={<CVManagement />} />
-          <Route path="analytics" element={<Analytics />} />
-          <Route path="settings" element={<SystemSettings />} />
+          <Route path="dashboard" element={<ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>} />
+          <Route path="users" element={<ProtectedRoute role="admin"><UserManagement /></ProtectedRoute>} />
+          <Route path="jobs" element={<ProtectedRoute role="admin"><JobManagement /></ProtectedRoute>} />
+          <Route path="cvs" element={<ProtectedRoute role="admin"><CVManagement /></ProtectedRoute>} />
+          <Route path="analytics" element={<ProtectedRoute role="admin"><Analytics /></ProtectedRoute>} />
+          <Route path="settings" element={<ProtectedRoute role="admin"><SystemSettings /></ProtectedRoute>} />
         </Route>
         
         {/* Redirect to dashboard based on role */}
@@ -131,25 +124,34 @@ const AppRoutes = () => {
 const ProtectedRoute = ({ children, role }) => {
   const { user, isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      navigate('/login', { state: { returnUrl: window.location.pathname } });
-    } else if (!isLoading && isAuthenticated && role && user?.role !== role) {
-      // If user doesn't have the required role, redirect to their appropriate dashboard
-      const dashboardPath = user?.role === 'admin' 
-        ? '/admin/dashboard'
-        : user?.role === 'employer' 
-          ? '/employer/dashboard' 
-          : '/candidate/dashboard';
-      
-      navigate(dashboardPath, { 
-        state: { 
-          message: `You don't have permission to access this page. You've been redirected to your dashboard.` 
-        } 
-      });
+    if (!isLoading) {
+      if (!isAuthenticated) {
+        console.log("User not authenticated, redirecting to login");
+        navigate('/login', { 
+          state: { returnUrl: location.pathname },
+          replace: true 
+        });
+      } else if (role && user?.role !== role) {
+        console.log(`User role (${user?.role}) not allowed. Required role: ${role}`);
+        // If user doesn't have the required role, redirect to their appropriate dashboard
+        const dashboardPath = user?.role === 'admin' 
+          ? '/admin/dashboard'
+          : user?.role === 'employer' 
+            ? '/employer/dashboard' 
+            : '/candidate/dashboard';
+        
+        navigate(dashboardPath, { 
+          state: { 
+            message: `You don't have permission to access this page. You've been redirected to your dashboard.` 
+          },
+          replace: true 
+        });
+      }
     }
-  }, [isAuthenticated, isLoading, role, user, navigate]);
+  }, [isAuthenticated, isLoading, role, user, navigate, location]);
   
   if (isLoading) {
     return <div className="min-h-screen flex items-center justify-center">
@@ -157,11 +159,7 @@ const ProtectedRoute = ({ children, role }) => {
     </div>;
   }
   
-  if (!isAuthenticated) {
-    return null;
-  }
-  
-  if (role && user?.role !== role) {
+  if (!isAuthenticated || (role && user?.role !== role)) {
     return null;
   }
   
@@ -172,22 +170,28 @@ const ProtectedRoute = ({ children, role }) => {
 const DashboardRedirect = () => {
   const { user, isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   
   useEffect(() => {
     if (!isLoading) {
       if (!isAuthenticated) {
-        navigate('/login', { replace: true });
+        navigate('/login', { 
+          state: { returnUrl: '/dashboard' },
+          replace: true 
+        });
       } else {
-        const dashboardPath = user?.role === 'admin' 
+        const role = user?.role || localStorage.getItem('userRole');
+        const dashboardPath = role === 'admin' 
           ? '/admin/dashboard'
-          : user?.role === 'employer' 
+          : role === 'employer' 
             ? '/employer/dashboard' 
             : '/candidate/dashboard';
         
+        console.log(`Redirecting to dashboard: ${dashboardPath} based on role: ${role}`);
         navigate(dashboardPath, { replace: true });
       }
     }
-  }, [isAuthenticated, isLoading, user, navigate]);
+  }, [isAuthenticated, isLoading, user, navigate, location]);
   
   if (isLoading) {
     return <div className="min-h-screen flex items-center justify-center">

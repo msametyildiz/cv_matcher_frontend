@@ -31,18 +31,37 @@ export const AuthProvider = ({ children }) => {
         // WARNING: In production, ALWAYS verify the token server-side
         const tokenParts = token.split('.');
         if (tokenParts.length === 3) {
-          const payload = JSON.parse(atob(tokenParts[1]));
-          if (payload.exp > Date.now() / 1000) {
-            setUser(payload.user);
-            setIsAuthenticated(true);
-          } else {
-            // Token expired
+          try {
+            const payload = JSON.parse(atob(tokenParts[1]));
+            if (payload.exp && payload.user && payload.exp > Date.now() / 1000) {
+              setUser(payload.user);
+              
+              // Ensure role is explicitly set in localStorage for easy access
+              if (payload.user.role) {
+                localStorage.setItem('userRole', payload.user.role);
+              }
+              
+              setIsAuthenticated(true);
+            } else {
+              // Token expired or invalid structure
+              console.warn("Token expired or invalid structure");
+              localStorage.removeItem('token');
+              localStorage.removeItem('userRole');
+            }
+          } catch (parseError) {
+            console.error("Error parsing token:", parseError);
             localStorage.removeItem('token');
+            localStorage.removeItem('userRole');
           }
+        } else {
+          console.warn("Invalid token format");
+          localStorage.removeItem('token');
+          localStorage.removeItem('userRole');
         }
       } catch (err) {
         console.error('Auth check error:', err);
         localStorage.removeItem('token');
+        localStorage.removeItem('userRole');
         setError(err.message);
       } finally {
         setIsLoading(false);
@@ -92,6 +111,7 @@ export const AuthProvider = ({ children }) => {
       
       // Save to localStorage
       localStorage.setItem('token', mockToken);
+      localStorage.setItem('userRole', mockUser.role); // Add role for quick access
       
       setUser(mockUser);
       setIsAuthenticated(true);
@@ -141,6 +161,7 @@ export const AuthProvider = ({ children }) => {
       
       // Save to localStorage
       localStorage.setItem('token', mockToken);
+      localStorage.setItem('userRole', mockUser.role); // Add role for quick access
       
       setUser(mockUser);
       setIsAuthenticated(true);
@@ -158,6 +179,7 @@ export const AuthProvider = ({ children }) => {
   // Logout function
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('userRole'); // Remove role
     setUser(null);
     setIsAuthenticated(false);
   };
@@ -185,16 +207,25 @@ export const AuthProvider = ({ children }) => {
       if (token) {
         const tokenParts = token.split('.');
         if (tokenParts.length === 3) {
-          const payload = JSON.parse(atob(tokenParts[1]));
-          payload.user = updatedUser;
-          
-          const newToken = [
-            tokenParts[0],
-            btoa(JSON.stringify(payload)),
-            tokenParts[2]
-          ].join('.');
-          
-          localStorage.setItem('token', newToken);
+          try {
+            const payload = JSON.parse(atob(tokenParts[1]));
+            payload.user = updatedUser;
+            
+            const newToken = [
+              tokenParts[0],
+              btoa(JSON.stringify(payload)),
+              tokenParts[2]
+            ].join('.');
+            
+            localStorage.setItem('token', newToken);
+            
+            // Ensure role is updated in localStorage too
+            if (updatedUser.role) {
+              localStorage.setItem('userRole', updatedUser.role);
+            }
+          } catch (parseError) {
+            console.error("Error updating token:", parseError);
+          }
         }
       }
       

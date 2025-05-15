@@ -15,6 +15,7 @@
     "autoprefixer": "^10.4.14",
     "axios": "^1.9.0",
     "clsx": "^2.1.1",
+    "jwt-decode": "^4.0.0",
     "loader-utils": "^3.2.1",
     "lucide-react": "^0.176.0",
     "minimatch": "^3.1.2",

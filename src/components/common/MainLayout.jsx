@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { 
   Home, 
   Briefcase, 
@@ -10,21 +10,36 @@ import {
   Calendar, 
   BarChart2, 
   Menu,
-  X
+  X,
+  LogOut
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
+import { Outlet } from 'react-router-dom';
 
 const MainLayout = ({ children }) => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Fallback to localStorage if user is not available in context
+  const userRole = user?.role || localStorage.getItem('userRole') || 'candidate';
   
   const isActive = (path) => {
     return location.pathname.startsWith(path);
   };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
   
   const getNavigation = () => {
-    switch (user.role) {
+    // If no user, try to get role from localStorage
+    const role = userRole;
+    console.log("Current user role:", role);
+    
+    switch (role) {
       case 'candidate':
         return [
           { name: 'Dashboard', path: '/candidate/dashboard', icon: <Home /> },
@@ -61,20 +76,32 @@ const MainLayout = ({ children }) => {
   
   return (
     <div className="flex flex-col min-h-screen">
-      <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <header className="bg-white shadow z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <h1 className="text-xl font-bold text-gray-900">CV Matcher</h1>
+          <div className="flex items-center space-x-4">
+            <span className="hidden md:inline text-sm text-gray-600">
+              Welcome, {user?.name || 'User'}
+            </span>
+            <button 
+              onClick={handleLogout}
+              className="flex items-center text-sm text-gray-600 hover:text-gray-900"
+            >
+              <LogOut className="h-4 w-4 mr-1" />
+              <span className="hidden md:inline">Logout</span>
+            </button>
+          </div>
         </div>
       </header>
       
-      <div className="flex h-screen overflow-hidden pt-16">
+      <div className="flex flex-1 overflow-hidden">
         {/* Sidebar for desktop */}
         <div className="hidden md:flex md:flex-shrink-0">
           <div className="flex flex-col w-64">
             <div className="flex flex-col h-0 flex-1">
               <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto bg-white border-r border-gray-200">
                 <div className="flex items-center flex-shrink-0 px-4">
-                  <span className="text-xl font-semibold text-gray-800">{user.role.charAt(0).toUpperCase() + user.role.slice(1)} Portal</span>
+                  <span className="text-xl font-semibold text-gray-800">{userRole.charAt(0).toUpperCase() + userRole.slice(1)} Portal</span>
                 </div>
                 <nav className="mt-5 flex-1 px-2 space-y-1">
                   {navigation.map((item) => (
@@ -125,7 +152,7 @@ const MainLayout = ({ children }) => {
             </div>
             
             <div className="flex-shrink-0 flex items-center px-4">
-              <span className="text-xl font-semibold text-gray-800">{user.role.charAt(0).toUpperCase() + user.role.slice(1)} Portal</span>
+              <span className="text-xl font-semibold text-gray-800">{userRole.charAt(0).toUpperCase() + userRole.slice(1)} Portal</span>
             </div>
             <div className="mt-5 flex-1 h-0 overflow-y-auto">
               <nav className="px-2 space-y-1">
@@ -175,7 +202,7 @@ const MainLayout = ({ children }) => {
             <div className="py-6">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
                 {/* Main content area */}
-                {children}
+                {children || <Outlet />}
               </div>
             </div>
           </main>
