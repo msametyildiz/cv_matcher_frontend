@@ -85,15 +85,33 @@ export const AuthProvider = ({ children }) => {
       
       // Mock response based on credentials
       let mockUser = null;
-      if (credentials.email === 'candidate@example.com') {
-        mockUser = { id: 1, name: 'John Candidate', email: credentials.email, role: 'candidate' };
-      } else if (credentials.email === 'employer@example.com') {
-        mockUser = { id: 2, name: 'Jane Employer', email: credentials.email, role: 'employer' };
-      } else if (credentials.email === 'admin@example.com') {
-        mockUser = { id: 3, name: 'Admin User', email: credentials.email, role: 'admin' };
-      } else {
-        // Default to candidate
-        mockUser = { id: 4, name: 'Default User', email: credentials.email, role: 'candidate' };
+      
+      // Explicitly check for role in credentials (for role-specific login)
+      const role = credentials.role || 'candidate'; // Default to candidate if not specified
+      
+      // Specified test accounts for each role
+      if (credentials.email === 'candidate@example.com' || role === 'candidate') {
+        mockUser = { 
+          id: 1, 
+          name: credentials.email === 'candidate@example.com' ? 'John Candidate' : 'Job Seeker User', 
+          email: credentials.email, 
+          role: 'candidate' 
+        };
+      } else if (credentials.email === 'employer@example.com' || role === 'employer') {
+        mockUser = { 
+          id: 2, 
+          name: credentials.email === 'employer@example.com' ? 'Jane Employer' : 'Employer User', 
+          email: credentials.email, 
+          companyName: 'Example Company',
+          role: 'employer' 
+        };
+      } else if (credentials.email === 'admin@example.com' || role === 'admin') {
+        mockUser = { 
+          id: 3, 
+          name: 'Admin User', 
+          email: credentials.email, 
+          role: 'admin' 
+        };
       }
       
       // Create token payload
@@ -141,9 +159,8 @@ export const AuthProvider = ({ children }) => {
       // Create user with provided data
       const mockUser = {
         id: Math.floor(Math.random() * 1000),
-        name: userData.name,
-        email: userData.email,
-        role: userData.role || 'candidate'
+        ...userData,
+        role: userData.role || 'candidate' // Default to candidate if role not specified
       };
       
       // Create token payload
@@ -241,6 +258,21 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Get dashboard URL based on user role
+  const getDashboardUrl = () => {
+    const role = user?.role || localStorage.getItem('userRole');
+    
+    switch (role) {
+      case 'employer':
+        return '/employer/dashboard';
+      case 'admin':
+        return '/admin/dashboard';
+      case 'candidate':
+      default:
+        return '/candidate/dashboard';
+    }
+  };
+
   // Auth context value
   const value = {
     user,
@@ -250,7 +282,8 @@ export const AuthProvider = ({ children }) => {
     login,
     register,
     logout,
-    updateProfile
+    updateProfile,
+    getDashboardUrl
   };
 
   return (

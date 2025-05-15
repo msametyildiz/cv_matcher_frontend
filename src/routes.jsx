@@ -15,6 +15,10 @@ import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
+import CandidateLogin from './pages/auth/CandidateLogin';
+import CandidateRegister from './pages/auth/CandidateRegister';
+import EmployerLogin from './pages/auth/EmployerLogin';
+import EmployerRegister from './pages/auth/EmployerRegister';
 
 // Candidate pages
 import CandidateDashboard from './pages/candidate/Dashboard';
@@ -66,9 +70,17 @@ const AppRoutes = () => {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         
-        {/* Auth routes */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        {/* Auth routes - Legacy routes for backward compatibility */}
+        <Route path="/login" element={<Navigate to="/candidate-login" replace />} />
+        <Route path="/register" element={<Navigate to="/candidate-register" replace />} />
+        
+        {/* New role-specific auth routes */}
+        <Route path="/candidate-login" element={<CandidateLogin />} />
+        <Route path="/candidate-register" element={<CandidateRegister />} />
+        <Route path="/employer-login" element={<EmployerLogin />} />
+        <Route path="/employer-register" element={<EmployerRegister />} />
+        
+        {/* Common auth routes */}
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         
@@ -130,7 +142,9 @@ const ProtectedRoute = ({ children, role }) => {
     if (!isLoading) {
       if (!isAuthenticated) {
         console.log("User not authenticated, redirecting to login");
-        navigate('/login', { 
+        // Redirect to appropriate login page
+        const loginPath = role === 'employer' ? '/employer-login' : '/candidate-login';
+        navigate(loginPath, { 
           state: { returnUrl: location.pathname },
           replace: true 
         });
@@ -175,7 +189,8 @@ const DashboardRedirect = () => {
   useEffect(() => {
     if (!isLoading) {
       if (!isAuthenticated) {
-        navigate('/login', { 
+        // Redirect to login screen (default to candidate login)
+        navigate('/candidate-login', { 
           state: { returnUrl: '/dashboard' },
           replace: true 
         });
